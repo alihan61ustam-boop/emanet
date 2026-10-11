@@ -1,16 +1,24 @@
-export type UserRole = 'driver' | 'sender' | 'admin';
+export type UserRole = 'admin' | 'driver' | 'sender';
 
 export interface UserProfile {
   id: string;
   fullName: string;
+  email: string;
   phone: string;
+  tcNo: string;
   tcNoVerified: boolean;
   rating: number;
+  role: UserRole;
   vehicleInfo?: string;
-  role: 'driver' | 'sender';
+  plateNumber?: string;
   avatarUrl?: string;
   totalTripsCompleted?: number;
   totalDeliveriesReceived?: number;
+  createdAt: string;
+}
+
+export interface RegisteredUser extends UserProfile {
+  password: string;
 }
 
 export interface CityLocation {

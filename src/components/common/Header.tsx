@@ -6,13 +6,17 @@ import {
   Calculator, 
   HelpCircle, 
   RotateCcw, 
-  Star,
-  CheckCircle2,
-  Radio
+  Star, 
+  CheckCircle2, 
+  Radio, 
+  LogOut, 
+  User, 
+  Crown,
+  LogIn
 } from 'lucide-react';
-import { CURRENT_USER } from '../../lib/mockStore';
+import { UserProfile } from '../../types';
 
-export type ActiveTab = 'sender' | 'driver' | 'escrow' | 'calculator';
+export type ActiveTab = 'sender' | 'driver' | 'escrow' | 'calculator' | 'admin';
 
 interface HeaderProps {
   activeTab: ActiveTab;
@@ -20,6 +24,9 @@ interface HeaderProps {
   onOpenTour: () => void;
   onResetData: () => void;
   pendingEscrowCount: number;
+  currentUser: UserProfile | null;
+  onLogout: () => void;
+  onOpenAuth: () => void;
 }
 
 export const Header: React.FC<HeaderProps> = ({
@@ -27,8 +34,13 @@ export const Header: React.FC<HeaderProps> = ({
   onTabChange,
   onOpenTour,
   onResetData,
-  pendingEscrowCount
+  pendingEscrowCount,
+  currentUser,
+  onLogout,
+  onOpenAuth
 }) => {
+  const isAdmin = currentUser?.role === 'admin';
+
   return (
     <header className="sticky top-0 z-50 w-full bg-[#090A0D]/95 backdrop-blur-md border-b border-[#20232F]">
       {/* Üst İnce Canlı Ticker Bandı */}
@@ -64,7 +76,7 @@ export const Header: React.FC<HeaderProps> = ({
 
             <div>
               <div className="flex items-center gap-2">
-                <h1 className="text-2xl font-black tracking-tight text-white m-0 p-0 font-display">
+                <h1 className="text-2xl font-black tracking-tight text-white m-0 p-0 font-display font-syne">
                   EMANET
                 </h1>
                 <span className="px-1.5 py-0.5 rounded bg-[#FF4500]/15 text-[#FF5719] text-[10px] font-mono font-extrabold uppercase tracking-wider border border-[#FF4500]/30">
@@ -82,7 +94,7 @@ export const Header: React.FC<HeaderProps> = ({
             <button
               type="button"
               onClick={() => onTabChange('sender')}
-              className={`px-4 py-2 rounded-lg text-xs font-mono font-bold transition-all flex items-center gap-2 ${
+              className={`px-3.5 py-2 rounded-lg text-xs font-mono font-bold transition-all flex items-center gap-1.5 ${
                 activeTab === 'sender'
                   ? 'bg-[#FF4500] text-black shadow-lg shadow-[#FF4500]/25'
                   : 'text-[#8E94A8] hover:text-white hover:bg-white/5'
@@ -95,7 +107,7 @@ export const Header: React.FC<HeaderProps> = ({
             <button
               type="button"
               onClick={() => onTabChange('driver')}
-              className={`px-4 py-2 rounded-lg text-xs font-mono font-bold transition-all flex items-center gap-2 ${
+              className={`px-3.5 py-2 rounded-lg text-xs font-mono font-bold transition-all flex items-center gap-1.5 ${
                 activeTab === 'driver'
                   ? 'bg-[#FF4500] text-black shadow-lg shadow-[#FF4500]/25'
                   : 'text-[#8E94A8] hover:text-white hover:bg-white/5'
@@ -108,14 +120,14 @@ export const Header: React.FC<HeaderProps> = ({
             <button
               type="button"
               onClick={() => onTabChange('escrow')}
-              className={`px-4 py-2 rounded-lg text-xs font-mono font-bold transition-all flex items-center gap-2 relative ${
+              className={`px-3.5 py-2 rounded-lg text-xs font-mono font-bold transition-all flex items-center gap-1.5 relative ${
                 activeTab === 'escrow'
                   ? 'bg-[#FF4500] text-black shadow-lg shadow-[#FF4500]/25'
                   : 'text-[#8E94A8] hover:text-white hover:bg-white/5'
               }`}
             >
               <ShieldCheck className="w-3.5 h-3.5" />
-              <span>[03] KODLU GÜVENCE</span>
+              <span>[03] GÜVENCE</span>
               {pendingEscrowCount > 0 && (
                 <span className="w-4 h-4 rounded-full bg-[#CCFF00] text-black text-[9px] font-black flex items-center justify-center font-mono">
                   {pendingEscrowCount}
@@ -133,17 +145,34 @@ export const Header: React.FC<HeaderProps> = ({
               }`}
             >
               <Calculator className="w-3.5 h-3.5" />
-              <span>[04] TARİFE TESTİ</span>
+              <span>[04] TARİFE</span>
             </button>
+
+            {/* Admin Giriş Yaptıysa Gösterilecek Sekme */}
+            {isAdmin && (
+              <button
+                type="button"
+                onClick={() => onTabChange('admin')}
+                className={`px-3.5 py-2 rounded-lg text-xs font-mono font-bold transition-all flex items-center gap-1.5 ${
+                  activeTab === 'admin'
+                    ? 'bg-amber-400 text-black shadow-lg shadow-amber-500/25'
+                    : 'text-amber-400 hover:text-amber-300 hover:bg-amber-400/10 border border-amber-400/30'
+                }`}
+              >
+                <Crown className="w-3.5 h-3.5" />
+                <span>[05] YÖNETİM</span>
+              </button>
+            )}
           </nav>
 
-          {/* Sağ Aksiyonlar */}
+          {/* Sağ Aksiyonlar: Rehber & Profil & Çıkış */}
           <div className="flex items-center gap-2.5">
-            {/* Nasıl Çalışır? Rehber Butonu */}
+            {/* Rehber Butonu */}
             <button
               type="button"
               onClick={onOpenTour}
-              className="px-3.5 py-2 rounded-xl bg-[#141720] hover:bg-[#1D212E] border border-[#2C3144] hover:border-[#FF4500]/50 text-white text-xs font-mono font-bold transition-all flex items-center gap-1.5"
+              className="px-3 py-2 rounded-xl bg-[#141720] hover:bg-[#1D212E] border border-[#2C3144] hover:border-[#FF4500]/50 text-white text-xs font-mono font-bold transition-all flex items-center gap-1.5"
+              title="Sistem Rehberi"
             >
               <HelpCircle className="w-4 h-4 text-[#FF4500]" />
               <span className="hidden sm:inline">REHBER</span>
@@ -159,26 +188,53 @@ export const Header: React.FC<HeaderProps> = ({
               <RotateCcw className="w-4 h-4" />
             </button>
 
-            {/* Sürücü Kimlik Rozeti */}
-            <div className="hidden lg:flex items-center gap-3 pl-3 border-l border-[#20232F]">
-              <div className="text-right font-mono">
-                <div className="text-xs font-bold text-white flex items-center gap-1 justify-end">
-                  <span>{CURRENT_USER.fullName}</span>
-                  <CheckCircle2 className="w-3 h-3 text-[#CCFF00]" />
+            {/* Kullanıcı Giriş Durumu & Profil Rozeti */}
+            {currentUser ? (
+              <div className="flex items-center gap-2.5 pl-2 sm:pl-3 border-l border-[#20232F]">
+                <div className="hidden lg:block text-right font-mono">
+                  <div className="text-xs font-bold text-white flex items-center gap-1 justify-end">
+                    <span>{currentUser.fullName}</span>
+                    <CheckCircle2 className="w-3 h-3 text-[#CCFF00]" />
+                  </div>
+                  <div className="text-[10px] text-[#868C9F] flex items-center gap-1 justify-end">
+                    {currentUser.role === 'admin' ? (
+                      <span className="text-amber-400 font-bold">👑 ADMİN</span>
+                    ) : currentUser.role === 'driver' ? (
+                      <span className="text-[#FF4500] font-bold">🚗 SÜRÜCÜ</span>
+                    ) : (
+                      <span className="text-purple-400 font-bold">📦 GÖNDERİCİ</span>
+                    )}
+                    <span>• {currentUser.tcNo.slice(0, 3)}*** ONAYLI</span>
+                  </div>
                 </div>
-                <div className="text-[10px] text-[#868C9F] flex items-center gap-1 justify-end">
-                  <Star className="w-3 h-3 text-[#FF4500] fill-[#FF4500]" />
-                  <span className="text-[#FF7A00] font-bold">{CURRENT_USER.rating}</span>
-                  <span>• TC ONAYLI</span>
-                </div>
-              </div>
 
-              <img
-                src={CURRENT_USER.avatarUrl}
-                alt={CURRENT_USER.fullName}
-                className="w-9 h-9 rounded-lg object-cover border border-[#2B2F40]"
-              />
-            </div>
+                <img
+                  src={currentUser.avatarUrl || 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=100'}
+                  alt={currentUser.fullName}
+                  className="w-9 h-9 rounded-lg object-cover border border-[#2B2F40]"
+                  title={currentUser.fullName}
+                />
+
+                {/* Çıkış Yap Butonu */}
+                <button
+                  type="button"
+                  onClick={onLogout}
+                  className="p-2 rounded-xl text-slate-400 hover:text-red-400 hover:bg-red-950/40 border border-[#20232F] hover:border-red-500/40 transition-all"
+                  title="Hesaptan Çıkış Yap"
+                >
+                  <LogOut className="w-4 h-4" />
+                </button>
+              </div>
+            ) : (
+              <button
+                type="button"
+                onClick={onOpenAuth}
+                className="px-3.5 py-2 rounded-xl bg-[#CCFF00] hover:bg-[#b8e600] text-black font-syne font-extrabold text-xs uppercase tracking-wider transition-all flex items-center gap-1.5"
+              >
+                <LogIn className="w-4 h-4" />
+                <span>Giriş Yap</span>
+              </button>
+            )}
           </div>
         </div>
 
@@ -191,7 +247,7 @@ export const Header: React.FC<HeaderProps> = ({
               activeTab === 'sender' ? 'bg-[#FF4500] text-black' : 'text-[#8E94A8]'
             }`}
           >
-            [01] Kargo Gönder
+            [01] Kargo
           </button>
           <button
             type="button"
@@ -200,7 +256,7 @@ export const Header: React.FC<HeaderProps> = ({
               activeTab === 'driver' ? 'bg-[#FF4500] text-black' : 'text-[#8E94A8]'
             }`}
           >
-            [02] Sürücüyüm
+            [02] Sürücü
           </button>
           <button
             type="button"
@@ -223,8 +279,19 @@ export const Header: React.FC<HeaderProps> = ({
               activeTab === 'calculator' ? 'bg-[#FF4500] text-black' : 'text-[#8E94A8]'
             }`}
           >
-            [04] Fiyat Testi
+            [04] Tarife
           </button>
+          {isAdmin && (
+            <button
+              type="button"
+              onClick={() => onTabChange('admin')}
+              className={`px-3 py-1.5 rounded-lg whitespace-nowrap font-bold ${
+                activeTab === 'admin' ? 'bg-amber-400 text-black' : 'text-amber-400'
+              }`}
+            >
+              [05] Yönetim
+            </button>
+          )}
         </div>
       </div>
     </header>

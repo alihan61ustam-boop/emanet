@@ -1,22 +1,68 @@
-import { DriverTrip, SenderPackage, MatchAndEscrow, UserProfile } from '../types';
+import { DriverTrip, SenderPackage, MatchAndEscrow, UserProfile, RegisteredUser, UserRole } from '../types';
 import { calculateEmanetPricing } from './pricing';
 import { calculateCorridorCities, generateFallbackRoute } from './gis';
 import { getCityByName } from './turkishCities';
 import { generateOtp } from './escrow';
 
-// Mevcut Aktif Kullanıcı Profili
-export const CURRENT_USER: UserProfile = {
-  id: 'usr-101',
+// Demo Başlangıç Hesapları
+export const DEMO_ADMIN: RegisteredUser = {
+  id: 'usr-admin-01',
+  fullName: 'Alihan Usta (Yönetici)',
+  email: 'admin@emanet.com',
+  phone: '+90 (555) 000-0001',
+  tcNo: '10000000146',
+  password: 'admin',
+  tcNoVerified: true,
+  rating: 5.0,
+  role: 'admin',
+  avatarUrl: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=200&auto=format&fit=crop&q=80',
+  totalTripsCompleted: 45,
+  totalDeliveriesReceived: 32,
+  createdAt: '2026-01-01T00:00:00Z'
+};
+
+export const DEMO_DRIVER: RegisteredUser = {
+  id: 'usr-driver-01',
   fullName: 'Barış Doğan',
+  email: 'surucu@emanet.com',
   phone: '+90 (532) 412-8890',
+  tcNo: '28475910284',
+  password: 'surucu',
   tcNoVerified: true,
   rating: 4.95,
-  vehicleInfo: '2022 Volkswagen Passat (Sedan, 586L Bagaj)',
   role: 'driver',
-  avatarUrl: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=200&auto=format&fit=crop&q=80',
+  vehicleInfo: '2022 Volkswagen Passat (Sedan, 586L Bagaj)',
+  plateNumber: '34 TR 4128',
+  avatarUrl: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=200&auto=format&fit=crop&q=80',
   totalTripsCompleted: 14,
-  totalDeliveriesReceived: 8
+  totalDeliveriesReceived: 8,
+  createdAt: '2026-02-15T00:00:00Z'
 };
+
+export const DEMO_SENDER: RegisteredUser = {
+  id: 'usr-sender-01',
+  fullName: 'Selin Yurt',
+  email: 'gonderici@emanet.com',
+  phone: '+90 (544) 987-6543',
+  tcNo: '39485720194',
+  password: 'kargo',
+  tcNoVerified: true,
+  rating: 4.89,
+  role: 'sender',
+  avatarUrl: 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=200&auto=format&fit=crop&q=80',
+  totalTripsCompleted: 0,
+  totalDeliveriesReceived: 12,
+  createdAt: '2026-03-20T00:00:00Z'
+};
+
+export const INITIAL_REGISTERED_USERS: RegisteredUser[] = [
+  DEMO_ADMIN,
+  DEMO_DRIVER,
+  DEMO_SENDER
+];
+
+// Mevcut Aktif Kullanıcı Referansı (Geriye Uyumluluk İçin)
+export let CURRENT_USER: UserProfile = DEMO_ADMIN;
 
 // Seed Sürücü İlanları
 function createInitialTrips(): DriverTrip[] {
@@ -24,11 +70,9 @@ function createInitialTrips(): DriverTrip[] {
   const ankCity = getCityByName('Ankara')!;
   const izmCity = getCityByName('İzmir')!;
 
-  // 1. Rota: İstanbul -> Ankara
   const istAnkRoute = generateFallbackRoute(istCity, ankCity);
   const istAnkCorridor = calculateCorridorCities(istAnkRoute.coordinates, 'İstanbul', 'Ankara', 30);
 
-  // 2. Rota: İstanbul -> İzmir
   const istIzmRoute = generateFallbackRoute(istCity, izmCity);
   const istIzmCorridor = calculateCorridorCities(istIzmRoute.coordinates, 'İstanbul', 'İzmir', 30);
 
@@ -49,7 +93,7 @@ function createInitialTrips(): DriverTrip[] {
       routeCoordinates: istAnkRoute.coordinates,
       distanceKm: istAnkRoute.distanceKm,
       estimatedHours: 4.8,
-      serviceCities: istAnkCorridor.serviceCities, // ['İstanbul', 'Kocaeli', 'Sakarya', 'Düzce', 'Bolu', 'Ankara']
+      serviceCities: istAnkCorridor.serviceCities,
       availableCapacityDesi: 35,
       totalCapacityDesi: 50,
       status: 'active',
@@ -72,7 +116,7 @@ function createInitialTrips(): DriverTrip[] {
       routeCoordinates: istIzmRoute.coordinates,
       distanceKm: istIzmRoute.distanceKm,
       estimatedHours: 4.2,
-      serviceCities: istIzmCorridor.serviceCities, // ['İstanbul', 'Yalova', 'Bursa', 'Balıkesir', 'Manisa', 'İzmir']
+      serviceCities: istIzmCorridor.serviceCities,
       availableCapacityDesi: 22,
       totalCapacityDesi: 40,
       status: 'active',
@@ -84,13 +128,9 @@ function createInitialTrips(): DriverTrip[] {
 
 // Seed Gönderici İlanları & Bekleyen Havuz Kargoları
 function createInitialPackages(): SenderPackage[] {
-  // Sakarya -> Ankara (Ahmet Çelik'in 30km koridoruna tam düşüyor!)
   const p1Pricing = calculateEmanetPricing(305, 6);
-  // Kocaeli -> Bolu (Ahmet Çelik'in koridorunda)
   const p2Pricing = calculateEmanetPricing(170, 3);
-  // İstanbul -> Ankara (Doğrudan rotada)
   const p3Pricing = calculateEmanetPricing(450, 12);
-  // Bursa -> İzmir (Zeynep Aktaş'ın koridorunda)
   const p4Pricing = calculateEmanetPricing(330, 4);
 
   const sakCity = getCityByName('Sakarya')!;
@@ -105,18 +145,18 @@ function createInitialPackages(): SenderPackage[] {
     {
       id: 'pkg-001',
       senderId: 'usr-301',
-      senderName: 'Mert Kayra',
-      senderPhone: '+90 (555) 123-4567',
+      senderName: 'Mehmet Yılmaz',
+      senderPhone: '+90 (532) 111-2233',
       originCity: 'Sakarya',
       originCoords: [sakCity.lat, sakCity.lng],
       destinationCity: 'Ankara',
       destinationCoords: [ankCity.lat, ankCity.lng],
       desi: 6,
       packageType: 'orta',
-      title: 'Mimari Maket Parçaları & Rulo Çizimler',
-      receiverName: 'Cemre Gökçek',
-      receiverPhone: '+90 (531) 234-5678',
-      readyDate: '2026-10-10T08:00:00Z',
+      title: 'Mimari Çizim & Pafta Proje Rulosu',
+      receiverName: 'Ayşe Kaya',
+      receiverPhone: '+90 (535) 222-3344',
+      readyDate: '2026-10-10T10:00:00Z',
       distanceKm: 305,
       quotedMarketPrice: p1Pricing.marketPrice,
       emanetPrice: p1Pricing.emanetPrice,
@@ -201,9 +241,7 @@ function createInitialPackages(): SenderPackage[] {
   ];
 }
 
-// Seed Eşleşme ve Escrow
 function createInitialMatches(trips: DriverTrip[], packages: SenderPackage[]): MatchAndEscrow[] {
-  // Örnek: pkg-003 daha önce trip-001 ile eşleşmiş ve havuzda teslim alma bekliyor
   const samplePkg = packages.find(p => p.id === 'pkg-003');
   const sampleTrip = trips.find(t => t.id === 'trip-001');
 
@@ -216,8 +254,8 @@ function createInitialMatches(trips: DriverTrip[], packages: SenderPackage[]): M
       packageId: samplePkg.id,
       trip: sampleTrip,
       pkg: samplePkg,
-      pickupOtp: '4821',   // Göndericinin sürücüye vereceği kod
-      deliveryOtp: '7935', // Alıcının teslimatta vereceği kod
+      pickupOtp: '4821',
+      deliveryOtp: '7935',
       pickupPhotoUrl: 'https://images.unsplash.com/photo-1549465220-1a8b9238cd48?w=500&auto=format&fit=crop&q=80',
       paymentStatus: 'held_in_escrow',
       matchedAt: '2026-10-09T12:30:00Z',
@@ -230,13 +268,17 @@ function createInitialMatches(trips: DriverTrip[], packages: SenderPackage[]): M
 const STORAGE_KEYS = {
   TRIPS: 'emanet_trips_v1',
   PACKAGES: 'emanet_packages_v1',
-  MATCHES: 'emanet_matches_v1'
+  MATCHES: 'emanet_matches_v1',
+  USERS: 'emanet_users_v1',
+  CURRENT_USER: 'emanet_current_user_v1'
 };
 
 export class MockDataStore {
   private trips: DriverTrip[] = [];
   private packages: SenderPackage[] = [];
   private matches: MatchAndEscrow[] = [];
+  private users: RegisteredUser[] = [];
+  private currentUser: UserProfile | null = null;
   private listeners: (() => void)[] = [];
 
   constructor() {
@@ -248,6 +290,23 @@ export class MockDataStore {
       const storedTrips = localStorage.getItem(STORAGE_KEYS.TRIPS);
       const storedPackages = localStorage.getItem(STORAGE_KEYS.PACKAGES);
       const storedMatches = localStorage.getItem(STORAGE_KEYS.MATCHES);
+      const storedUsers = localStorage.getItem(STORAGE_KEYS.USERS);
+      const storedCurrentUser = localStorage.getItem(STORAGE_KEYS.CURRENT_USER);
+
+      if (storedUsers) {
+        this.users = JSON.parse(storedUsers);
+      } else {
+        this.users = [...INITIAL_REGISTERED_USERS];
+      }
+
+      if (storedCurrentUser) {
+        this.currentUser = JSON.parse(storedCurrentUser);
+        CURRENT_USER = this.currentUser!;
+      } else {
+        // İlk açılışta admin varsayılan olarak seçili olabilir
+        this.currentUser = DEMO_ADMIN;
+        CURRENT_USER = DEMO_ADMIN;
+      }
 
       if (storedTrips && storedPackages) {
         this.trips = JSON.parse(storedTrips);
@@ -267,6 +326,12 @@ export class MockDataStore {
       localStorage.setItem(STORAGE_KEYS.TRIPS, JSON.stringify(this.trips));
       localStorage.setItem(STORAGE_KEYS.PACKAGES, JSON.stringify(this.packages));
       localStorage.setItem(STORAGE_KEYS.MATCHES, JSON.stringify(this.matches));
+      localStorage.setItem(STORAGE_KEYS.USERS, JSON.stringify(this.users));
+      if (this.currentUser) {
+        localStorage.setItem(STORAGE_KEYS.CURRENT_USER, JSON.stringify(this.currentUser));
+      } else {
+        localStorage.removeItem(STORAGE_KEYS.CURRENT_USER);
+      }
     } catch (e) {
       console.warn('Storage save error:', e);
     }
@@ -277,6 +342,9 @@ export class MockDataStore {
     this.trips = createInitialTrips();
     this.packages = createInitialPackages();
     this.matches = createInitialMatches(this.trips, this.packages);
+    this.users = [...INITIAL_REGISTERED_USERS];
+    this.currentUser = DEMO_ADMIN;
+    CURRENT_USER = DEMO_ADMIN;
     this.relinkEntities();
     this.saveToStorage();
   }
@@ -301,47 +369,146 @@ export class MockDataStore {
     }
   }
 
-  // Getters
+  // --- KULLANICI & KİMLİK DOĞRULAMA (AUTH) METOTLARI ---
+  public getCurrentUser(): UserProfile | null {
+    return this.currentUser;
+  }
+
+  public setCurrentUser(user: UserProfile | null) {
+    this.currentUser = user;
+    if (user) {
+      CURRENT_USER = user;
+    }
+    this.saveToStorage();
+  }
+
+  public getAllUsers(): RegisteredUser[] {
+    return this.users;
+  }
+
+  public login(identifier: string, pass: string): { success: boolean; user?: UserProfile; message?: string } {
+    const cleanId = identifier.trim().toLowerCase();
+    const cleanPass = pass.trim();
+
+    const found = this.users.find(u => 
+      (u.email.toLowerCase() === cleanId || 
+       u.tcNo === cleanId || 
+       u.phone.replace(/\D/g, '') === cleanId.replace(/\D/g, ''))
+    );
+
+    if (!found) {
+      return { success: false, message: 'Bu T.C., E-posta veya telefon ile kayıtlı hesap bulunamadı.' };
+    }
+
+    if (found.password !== cleanPass) {
+      return { success: false, message: 'Şifreniz hatalı. Lütfen kontrol ediniz.' };
+    }
+
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    const { password, ...userProfile } = found;
+    this.setCurrentUser(userProfile);
+    return { success: true, user: userProfile };
+  }
+
+  public register(data: {
+    fullName: string;
+    email: string;
+    phone: string;
+    tcNo: string;
+    password: string;
+    role: UserRole;
+    vehicleInfo?: string;
+    plateNumber?: string;
+  }): { success: boolean; user?: UserProfile; message?: string } {
+    const cleanTc = data.tcNo.trim();
+    const cleanEmail = data.email.trim().toLowerCase();
+    const cleanPhone = data.phone.trim();
+
+    // Kontroller
+    if (cleanTc.length !== 11) {
+      return { success: false, message: 'T.C. Kimlik Numarası 11 haneli olmalıdır.' };
+    }
+
+    const existingTc = this.users.find(u => u.tcNo === cleanTc);
+    if (existingTc) {
+      return { success: false, message: 'Bu T.C. Kimlik Numarası zaten kayıtlı.' };
+    }
+
+    const existingEmail = this.users.find(u => u.email.toLowerCase() === cleanEmail);
+    if (existingEmail) {
+      return { success: false, message: 'Bu e-posta adresi ile zaten bir hesap mevcut.' };
+    }
+
+    const newUser: RegisteredUser = {
+      id: `usr-${Date.now()}`,
+      fullName: data.fullName.trim(),
+      email: cleanEmail,
+      phone: cleanPhone,
+      tcNo: cleanTc,
+      password: data.password,
+      tcNoVerified: true, // Emanet Nüfus doğrulaması simülasyonu
+      rating: 5.0,
+      role: data.role,
+      vehicleInfo: data.vehicleInfo,
+      plateNumber: data.plateNumber,
+      avatarUrl: data.role === 'driver'
+        ? 'https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=200&auto=format&fit=crop&q=80'
+        : 'https://images.unsplash.com/photo-1580489944761-15a19d654956?w=200&auto=format&fit=crop&q=80',
+      totalTripsCompleted: 0,
+      totalDeliveriesReceived: 0,
+      createdAt: new Date().toISOString()
+    };
+
+    this.users.unshift(newUser);
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    const { password, ...userProfile } = newUser;
+    this.setCurrentUser(userProfile);
+    this.saveToStorage();
+
+    return { success: true, user: userProfile };
+  }
+
+  public logout() {
+    this.currentUser = null;
+    this.saveToStorage();
+  }
+
+  // --- SEFER & KARGO VERİLERİ ---
   public getTrips(): DriverTrip[] {
-    return [...this.trips];
+    return this.trips;
   }
 
-  public getPackages(): SenderPackage[] {
-    return [...this.packages];
-  }
-
-  public getMatches(): MatchAndEscrow[] {
-    return [...this.matches];
-  }
-
-  // Sürücü Yeni Rota Açar
   public addTrip(trip: DriverTrip) {
     this.trips.unshift(trip);
     this.saveToStorage();
   }
 
-  // Gönderici Yeni Kargo / İlan Havuzuna Bırakır
+  public getPackages(): SenderPackage[] {
+    return this.packages;
+  }
+
   public addPackage(pkg: SenderPackage) {
     this.packages.unshift(pkg);
     this.saveToStorage();
   }
 
-  // Kargo ile Sürücüyü Eşleştir ve Escrow'u Başlat
-  public matchPackageWithTrip(packageId: string, tripId: string): MatchAndEscrow | null {
-    const pkg = this.packages.find(p => p.id === packageId);
+  public getMatches(): MatchAndEscrow[] {
+    return this.matches;
+  }
+
+  public createMatch(tripId: string, packageId: string): MatchAndEscrow {
     const trip = this.trips.find(t => t.id === tripId);
+    const pkg = this.packages.find(p => p.id === packageId);
 
-    if (!pkg || !trip) return null;
-    if (trip.availableCapacityDesi < pkg.desi) return null;
+    if (!trip || !pkg) throw new Error('Sefer veya paket bulunamadı.');
 
-    // Kapasiteyi düşür
-    trip.availableCapacityDesi -= pkg.desi;
     pkg.status = 'matched';
+    trip.availableCapacityDesi = Math.max(0, trip.availableCapacityDesi - pkg.desi);
 
     const newMatch: MatchAndEscrow = {
       id: `match-${Date.now()}`,
-      tripId: trip.id,
-      packageId: pkg.id,
+      tripId,
+      packageId,
       trip,
       pkg,
       pickupOtp: generateOtp(),
@@ -355,7 +522,10 @@ export class MockDataStore {
     return newMatch;
   }
 
-  // Teslim Alma Onayı (Pickup OTP Doğrulama + Fotoğraf)
+  public matchPackageWithTrip(packageId: string, tripId: string): MatchAndEscrow {
+    return this.createMatch(tripId, packageId);
+  }
+
   public confirmPickup(matchId: string, enteredOtp: string, photoUrl?: string): boolean {
     const match = this.matches.find(m => m.id === matchId);
     if (!match || match.pickupOtp !== enteredOtp) return false;
@@ -371,7 +541,6 @@ export class MockDataStore {
     return true;
   }
 
-  // Teslim Etme Onayı (Delivery OTP Doğrulama + Escrow Serbest Bırakma)
   public confirmDelivery(matchId: string, enteredOtp: string, photoUrl?: string): boolean {
     const match = this.matches.find(m => m.id === matchId);
     if (!match || match.deliveryOtp !== enteredOtp) return false;
@@ -388,7 +557,6 @@ export class MockDataStore {
     return true;
   }
 
-  // Belirli bir rotanın 30km koridoruna düşen havuzdaki kargoları tespit eder
   public getWaitingPackagesForTrip(trip: DriverTrip): SenderPackage[] {
     return this.packages.filter(pkg => {
       if (pkg.status !== 'waiting_match') return false;
@@ -401,7 +569,6 @@ export class MockDataStore {
     });
   }
 
-  // Gönderici için uyumlu aktif sürücüleri ara
   public findMatchingTripsForRoute(originCity: string, destCity: string, desi: number): DriverTrip[] {
     const normOrigin = originCity.trim().toLowerCase();
     const normDest = destCity.trim().toLowerCase();

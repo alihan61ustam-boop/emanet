@@ -69,14 +69,16 @@ export const CreateTripModal: React.FC<CreateTripModalProps> = ({
       setServiceCities(corridor.serviceCities);
       setBufferPolygon(corridor.bufferPolygon);
 
+      const user = store.getCurrentUser() || CURRENT_USER;
+
       const tempTrip: DriverTrip = {
         id: 'temp',
-        driverId: CURRENT_USER.id,
-        driverName: CURRENT_USER.fullName,
-        driverPhone: CURRENT_USER.phone,
-        driverRating: CURRENT_USER.rating,
+        driverId: user.id,
+        driverName: user.fullName,
+        driverPhone: user.phone,
+        driverRating: user.rating,
         vehicleInfo,
-        tcNoVerified: CURRENT_USER.tcNoVerified,
+        tcNoVerified: user.tcNoVerified,
         originCity,
         originCoords: [origin.lat, origin.lng],
         destinationCity: destCity,
@@ -115,15 +117,16 @@ export const CreateTripModal: React.FC<CreateTripModalProps> = ({
 
     const origin = getCityByName(originCity)!;
     const dest = getCityByName(destCity)!;
+    const user = store.getCurrentUser() || CURRENT_USER;
 
     const newTrip: DriverTrip = {
       id: `trip-${Date.now()}`,
-      driverId: CURRENT_USER.id,
-      driverName: CURRENT_USER.fullName,
-      driverPhone: CURRENT_USER.phone,
-      driverRating: CURRENT_USER.rating,
+      driverId: user.id,
+      driverName: user.fullName,
+      driverPhone: user.phone,
+      driverRating: user.rating,
       vehicleInfo,
-      tcNoVerified: CURRENT_USER.tcNoVerified,
+      tcNoVerified: user.tcNoVerified,
       originCity,
       originCoords: [origin.lat, origin.lng],
       destinationCity: destCity,

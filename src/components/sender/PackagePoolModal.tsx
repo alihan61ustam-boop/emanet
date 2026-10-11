@@ -56,11 +56,13 @@ export const PackagePoolModal: React.FC<PackagePoolModalProps> = ({
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
 
+    const user = store.getCurrentUser() || CURRENT_USER;
+
     const newPkg: SenderPackage = {
       id: `pkg-${Date.now()}`,
-      senderId: CURRENT_USER.id,
-      senderName: CURRENT_USER.fullName,
-      senderPhone: CURRENT_USER.phone,
+      senderId: user.id,
+      senderName: user.fullName,
+      senderPhone: user.phone,
       originCity,
       originCoords: [origin.lat, origin.lng],
       destinationCity: destCity,

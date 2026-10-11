@@ -5,11 +5,13 @@ import {
   ShieldCheck, 
   Sparkles, 
   TrendingDown, 
-  Layers, 
-  Plus,
-  ArrowRight,
-  Radio,
-  Compass
+  Plus, 
+  ArrowRight, 
+  Radio, 
+  Compass,
+  Crown,
+  UserCheck,
+  Zap
 } from 'lucide-react';
 import { Header, ActiveTab } from './components/common/Header';
 import { SystemTourModal } from './components/common/SystemTourModal';
@@ -23,12 +25,25 @@ import { SenderPackagesList } from './components/sender/SenderPackagesList';
 import { PackagePoolModal } from './components/sender/PackagePoolModal';
 import { EscrowDashboard } from './components/escrow/EscrowDashboard';
 import { PricingPlayground } from './components/calculator/PricingPlayground';
+import { AdminDashboard } from './components/admin/AdminDashboard';
+import { AuthPage } from './components/auth/AuthPage';
 import { store } from './lib/mockStore';
-import { DriverTrip, SenderPackage, MatchAndEscrow } from './types';
+import { DriverTrip, SenderPackage, MatchAndEscrow, UserProfile } from './types';
 import { calculateCorridorCities } from './lib/gis';
 
 export function App() {
-  const [activeTab, setActiveTab] = useState<ActiveTab>('sender');
+  // Kullanıcı ve Kimlik Durumu
+  const [currentUser, setCurrentUser] = useState<UserProfile | null>(() => store.getCurrentUser());
+  const [isAuthOpen, setIsAuthOpen] = useState<boolean>(() => !store.getCurrentUser());
+
+  // Aktif Sekme (Admin ise varsayılan 'admin', değilse 'sender')
+  const [activeTab, setActiveTab] = useState<ActiveTab>(() => {
+    const user = store.getCurrentUser();
+    if (user?.role === 'admin') return 'admin';
+    if (user?.role === 'driver') return 'driver';
+    return 'sender';
+  });
+
   const [trips, setTrips] = useState<DriverTrip[]>(() => store.getTrips());
   const [packages, setPackages] = useState<SenderPackage[]>(() => store.getPackages());
   const [matches, setMatches] = useState<MatchAndEscrow[]>(() => store.getMatches());
@@ -47,6 +62,7 @@ export function App() {
       setTrips(currentTrips);
       setPackages(store.getPackages());
       setMatches(store.getMatches());
+      setCurrentUser(store.getCurrentUser());
 
       if (selectedTrip) {
         const updated = currentTrips.find(t => t.id === selectedTrip.id);
@@ -61,6 +77,7 @@ export function App() {
     setTrips(store.getTrips());
     setPackages(store.getPackages());
     setMatches(store.getMatches());
+    setCurrentUser(store.getCurrentUser());
   };
 
   const handleResetData = () => {
@@ -70,6 +87,36 @@ export function App() {
       setSelectedTrip(store.getTrips()[0] || null);
     }
   };
+
+  const handleLoginSuccess = (user: UserProfile) => {
+    setCurrentUser(user);
+    setIsAuthOpen(false);
+
+    // Role göre en uygun sekmeye yönlendir
+    if (user.role === 'admin') {
+      setActiveTab('admin');
+    } else if (user.role === 'driver') {
+      setActiveTab('driver');
+    } else {
+      setActiveTab('sender');
+    }
+  };
+
+  const handleLogout = () => {
+    store.logout();
+    setCurrentUser(null);
+    setIsAuthOpen(true);
+  };
+
+  // Eğer kullanıcı oturum açmamışsa veya giriş ekranını açmışsa Kapsamlı Auth Sayfasını Göster
+  if (!currentUser || isAuthOpen) {
+    return (
+      <AuthPage
+        onLoginSuccess={handleLoginSuccess}
+        onExploreAsGuest={() => setIsAuthOpen(false)}
+      />
+    );
+  }
 
   const corridorResult = selectedTrip
     ? calculateCorridorCities(selectedTrip.routeCoordinates, selectedTrip.originCity, selectedTrip.destinationCity, 30)
@@ -87,6 +134,9 @@ export function App() {
         onOpenTour={() => setIsTourOpen(true)}
         onResetData={handleResetData}
         pendingEscrowCount={pendingEscrowCount}
+        currentUser={currentUser}
+        onLogout={handleLogout}
+        onOpenAuth={() => setIsAuthOpen(true)}
       />
 
       {/* Ana Gövde */}
@@ -98,9 +148,33 @@ export function App() {
 
           <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-6 relative z-10">
             <div className="space-y-3.5 max-w-2xl">
-              <div className="inline-flex items-center gap-2 px-3 py-1 rounded bg-[#FF4500]/15 border border-[#FF4500]/30 text-[#FF4500] font-mono text-xs font-bold uppercase tracking-widest">
-                <Radio className="w-3.5 h-3.5 animate-pulse" />
-                <span>P2P OTOYOL BAGAJ & KARGO AĞI</span>
+              
+              {/* Kullanıcı Giriş Rozeti & Rol Bilgisi */}
+              <div className="flex flex-wrap items-center gap-2">
+                <div className="inline-flex items-center gap-2 px-3 py-1 rounded bg-[#FF4500]/15 border border-[#FF4500]/30 text-[#FF4500] font-mono text-xs font-bold uppercase tracking-widest">
+                  <Radio className="w-3.5 h-3.5 animate-pulse" />
+                  <span>P2P OTOYOL BAGAJ & KARGO AĞI</span>
+                </div>
+
+                <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded bg-[#CCFF00]/10 border border-[#CCFF00]/30 text-[#CCFF00] font-mono text-xs font-bold">
+                  {currentUser.role === 'admin' ? (
+                    <>
+                      <Crown className="w-3.5 h-3.5 text-amber-400" />
+                      <span>👑 YÖNETİCİ: {currentUser.fullName}</span>
+                    </>
+                  ) : currentUser.role === 'driver' ? (
+                    <>
+                      <Car className="w-3.5 h-3.5 text-[#FF4500]" />
+                      <span>🚗 SÜRÜCÜ: {currentUser.fullName}</span>
+                    </>
+                  ) : (
+                    <>
+                      <Package className="w-3.5 h-3.5 text-purple-400" />
+                      <span>📦 GÖNDERİCİ: {currentUser.fullName}</span>
+                    </>
+                  )}
+                  <span className="text-white/60">• TC ONAYLI</span>
+                </div>
               </div>
 
               <h2 className="text-2xl sm:text-4xl font-syne font-extrabold text-white tracking-tight leading-tight">
@@ -137,6 +211,17 @@ export function App() {
                   <Plus className="w-4 h-4 stroke-[3]" />
                   <span>Sürücüyüm (Rota Aç)</span>
                 </button>
+
+                {currentUser.role === 'admin' && (
+                  <button
+                    type="button"
+                    onClick={() => setActiveTab('admin')}
+                    className="px-4 py-3 rounded-lg bg-amber-400 hover:bg-amber-300 text-black text-xs font-syne font-extrabold uppercase tracking-wider transition-all flex items-center gap-2 shadow-[0_4px_20px_rgba(251,191,36,0.35)] active:translate-y-0.5"
+                  >
+                    <Crown className="w-4 h-4" />
+                    <span>Admin Paneli</span>
+                  </button>
+                )}
 
                 <button
                   type="button"
@@ -301,6 +386,19 @@ export function App() {
         {activeTab === 'calculator' && (
           <div className="space-y-6">
             <PricingPlayground />
+          </div>
+        )}
+
+        {/* 5. SEKME: ADMIN DASHBOARD (Sadece Yönetici Yetkisinde) */}
+        {activeTab === 'admin' && currentUser.role === 'admin' && (
+          <div className="space-y-6">
+            <AdminDashboard
+              currentUser={currentUser}
+              trips={trips}
+              packages={packages}
+              matches={matches}
+              onRefresh={handleRefresh}
+            />
           </div>
         )}
       </main>
