@@ -6,9 +6,9 @@ import {
   Calendar, 
   Phone, 
   User, 
-  Sparkles, 
   CheckCircle2, 
-  ShieldCheck 
+  ShieldCheck,
+  ArrowRight
 } from 'lucide-react';
 import { TURKISH_CITIES, getCityByName } from '../../lib/turkishCities';
 import { calculateEmanetPricing } from '../../lib/pricing';
@@ -50,7 +50,6 @@ export const PackagePoolModal: React.FC<PackagePoolModalProps> = ({
   const origin = getCityByName(originCity) || TURKISH_CITIES[0];
   const dest = getCityByName(destCity) || TURKISH_CITIES[1];
 
-  // Mesafe ve Fiyat Hesapla
   const route = generateFallbackRoute(origin, dest);
   const pricing = calculateEmanetPricing(route.distanceKm, desi);
 
@@ -88,28 +87,33 @@ export const PackagePoolModal: React.FC<PackagePoolModalProps> = ({
   };
 
   return (
-    <div className="fixed inset-0 z-[9990] flex items-center justify-center p-4 bg-slate-950/80 backdrop-blur-md animate-in fade-in duration-200">
-      <div className="relative w-full max-w-2xl rounded-3xl bg-[#0D1322] border border-white/10 shadow-2xl overflow-hidden flex flex-col max-h-[90vh]">
+    <div className="fixed inset-0 z-[9990] flex items-center justify-center p-4 bg-black/85 backdrop-blur-md animate-in fade-in duration-200">
+      <div className="relative w-full max-w-2xl chamfer-card bg-[#0D0F14] border-2 border-white/10 shadow-[0_25px_80px_rgba(0,0,0,0.95)] overflow-hidden flex flex-col max-h-[90vh]">
         {/* Üst Bar */}
-        <div className="p-6 pb-4 border-b border-white/5 flex items-center justify-between">
+        <div className="p-5 border-b border-white/10 flex items-center justify-between bg-[#12151C]">
           <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-2xl bg-emerald-500/20 border border-emerald-500/30 flex items-center justify-center text-emerald-400">
-              <Package className="w-5 h-5" />
+            <div className="w-10 h-10 rounded-lg bg-[#CCFF00] text-black flex items-center justify-center shadow-[0_0_15px_rgba(204,255,0,0.35)]">
+              <Package className="w-5 h-5 stroke-[2.5]" />
             </div>
             <div>
-              <h2 className="text-lg font-bold text-white tracking-tight">
+              <div className="flex items-center gap-2">
+                <span className="font-mono text-[10px] text-[#CCFF00] uppercase tracking-widest font-bold">
+                  HAVUZ İLAN MANİFESTOSU
+                </span>
+                <span className="font-mono text-[10px] px-1.5 py-0.2 rounded bg-white/10 text-white/60">
+                  PARCEL INTAKE
+                </span>
+              </div>
+              <h2 className="text-lg font-syne font-extrabold text-white tracking-tight">
                 İlan Havuzuna Kargo Bırak
               </h2>
-              <p className="text-xs text-slate-400">
-                Talebinizi havuza kaydedin, güzergahınızdan geçen sürücüler anında bildirim alsın
-              </p>
             </div>
           </div>
 
           <button
             type="button"
             onClick={onClose}
-            className="p-2 rounded-xl text-slate-400 hover:text-white hover:bg-white/5 transition-all"
+            className="p-2 rounded-lg text-slate-400 hover:text-white hover:bg-white/10 transition-all font-mono"
           >
             <X className="w-5 h-5" />
           </button>
@@ -129,36 +133,36 @@ export const PackagePoolModal: React.FC<PackagePoolModalProps> = ({
           {/* Şehirler */}
           <div className="grid grid-cols-2 gap-3">
             <div className="space-y-1.5">
-              <label className="text-xs font-semibold text-slate-300 flex items-center gap-1.5">
-                <MapPin className="w-3.5 h-3.5 text-emerald-400" />
-                <span>Çıkış Şehri</span>
+              <label className="text-[11px] font-mono uppercase tracking-wider text-slate-300 flex items-center gap-1.5">
+                <MapPin className="w-3.5 h-3.5 text-[#CCFF00]" />
+                <span>Çıkış İli</span>
               </label>
               <select
                 value={originCity}
                 onChange={e => setOriginCity(e.target.value)}
-                className="w-full px-3 py-2.5 rounded-xl bg-slate-900 border border-white/10 text-white text-xs font-medium focus:border-emerald-500 focus:outline-none"
+                className="w-full px-3 py-2.5 rounded-lg bg-[#07080A] border border-white/15 text-white text-xs font-mono font-bold focus:border-[#CCFF00] focus:outline-none"
               >
                 {TURKISH_CITIES.map(c => (
                   <option key={c.plate} value={c.name}>
-                    {c.name}
+                    {c.plate} - {c.name}
                   </option>
                 ))}
               </select>
             </div>
 
             <div className="space-y-1.5">
-              <label className="text-xs font-semibold text-slate-300 flex items-center gap-1.5">
-                <MapPin className="w-3.5 h-3.5 text-purple-400" />
-                <span>Varış Şehri</span>
+              <label className="text-[11px] font-mono uppercase tracking-wider text-slate-300 flex items-center gap-1.5">
+                <MapPin className="w-3.5 h-3.5 text-[#FF4500]" />
+                <span>Varış İli</span>
               </label>
               <select
                 value={destCity}
                 onChange={e => setDestCity(e.target.value)}
-                className="w-full px-3 py-2.5 rounded-xl bg-slate-900 border border-white/10 text-white text-xs font-medium focus:border-purple-500 focus:outline-none"
+                className="w-full px-3 py-2.5 rounded-lg bg-[#07080A] border border-white/15 text-white text-xs font-mono font-bold focus:border-[#FF4500] focus:outline-none"
               >
                 {TURKISH_CITIES.map(c => (
                   <option key={c.plate} value={c.name}>
-                    {c.name}
+                    {c.plate} - {c.name}
                   </option>
                 ))}
               </select>
@@ -168,36 +172,40 @@ export const PackagePoolModal: React.FC<PackagePoolModalProps> = ({
           {/* Kargo Başlığı & Desi */}
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
             <div className="sm:col-span-2 space-y-1.5">
-              <label className="text-xs font-semibold text-slate-300">Kargo Açıklaması</label>
+              <label className="text-[11px] font-mono uppercase tracking-wider text-slate-300">
+                Kargo İçerik Açıklaması
+              </label>
               <input
                 type="text"
                 value={title}
                 onChange={e => setTitle(e.target.value)}
                 placeholder="Örn: Yedek parça kutusu, tasarım maketi vb."
-                className="w-full px-3 py-2.5 rounded-xl bg-slate-900 border border-white/10 text-white text-xs focus:border-emerald-500 focus:outline-none"
+                className="w-full px-3 py-2.5 rounded-lg bg-[#07080A] border border-white/15 text-white text-xs font-grotesk focus:border-[#CCFF00] focus:outline-none"
                 required
               />
             </div>
 
             <div className="space-y-1.5">
-              <label className="text-xs font-semibold text-slate-300">Desi Hacmi</label>
+              <label className="text-[11px] font-mono uppercase tracking-wider text-slate-300">
+                Desi Hacmi
+              </label>
               <input
                 type="number"
                 min="1"
                 max="60"
                 value={desi}
                 onChange={e => setDesi(Math.max(1, Number(e.target.value)))}
-                className="w-full px-3 py-2.5 rounded-xl bg-slate-900 border border-white/10 text-white text-xs font-mono font-bold focus:border-amber-500 focus:outline-none"
+                className="w-full px-3 py-2.5 rounded-lg bg-[#07080A] border border-white/15 text-[#CCFF00] text-xs font-mono font-bold focus:border-[#CCFF00] focus:outline-none"
                 required
               />
             </div>
           </div>
 
           {/* Alıcı Bilgileri */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-2 border-t border-white/5">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-2 border-t border-white/10">
             <div className="space-y-1.5">
-              <label className="text-xs font-semibold text-slate-300 flex items-center gap-1.5">
-                <User className="w-3.5 h-3.5 text-blue-400" />
+              <label className="text-[11px] font-mono uppercase tracking-wider text-slate-300 flex items-center gap-1.5">
+                <User className="w-3.5 h-3.5 text-[#00E5FF]" />
                 <span>Alıcı Adı Soyadı</span>
               </label>
               <input
@@ -205,14 +213,14 @@ export const PackagePoolModal: React.FC<PackagePoolModalProps> = ({
                 value={receiverName}
                 onChange={e => setReceiverName(e.target.value)}
                 placeholder="Örn: Ahmet Yılmaz"
-                className="w-full px-3 py-2.5 rounded-xl bg-slate-900 border border-white/10 text-white text-xs focus:border-emerald-500 focus:outline-none"
+                className="w-full px-3 py-2.5 rounded-lg bg-[#07080A] border border-white/15 text-white text-xs font-grotesk focus:border-[#CCFF00] focus:outline-none"
                 required
               />
             </div>
 
             <div className="space-y-1.5">
-              <label className="text-xs font-semibold text-slate-300 flex items-center gap-1.5">
-                <Phone className="w-3.5 h-3.5 text-blue-400" />
+              <label className="text-[11px] font-mono uppercase tracking-wider text-slate-300 flex items-center gap-1.5">
+                <Phone className="w-3.5 h-3.5 text-[#00E5FF]" />
                 <span>Alıcı Telefonu</span>
               </label>
               <input
@@ -220,45 +228,45 @@ export const PackagePoolModal: React.FC<PackagePoolModalProps> = ({
                 value={receiverPhone}
                 onChange={e => setReceiverPhone(e.target.value)}
                 placeholder="Örn: +90 (5XX) XXX-XXXX"
-                className="w-full px-3 py-2.5 rounded-xl bg-slate-900 border border-white/10 text-white text-xs focus:border-emerald-500 focus:outline-none"
+                className="w-full px-3 py-2.5 rounded-lg bg-[#07080A] border border-white/15 text-white text-xs font-mono focus:border-[#CCFF00] focus:outline-none"
                 required
               />
             </div>
           </div>
 
           <div className="space-y-1.5">
-            <label className="text-xs font-semibold text-slate-300 flex items-center gap-1.5">
-              <Calendar className="w-3.5 h-3.5 text-amber-400" />
-              <span>Teslime Hazır Olma Tarihi</span>
+            <label className="text-[11px] font-mono uppercase tracking-wider text-slate-300 flex items-center gap-1.5">
+              <Calendar className="w-3.5 h-3.5 text-[#CCFF00]" />
+              <span>Teslime Hazır Olma Zamanı</span>
             </label>
             <input
               type="datetime-local"
               value={readyDate}
               onChange={e => setReadyDate(e.target.value)}
-              className="w-full px-3 py-2.5 rounded-xl bg-slate-900 border border-white/10 text-white text-xs focus:border-emerald-500 focus:outline-none"
+              className="w-full px-3 py-2.5 rounded-lg bg-[#07080A] border border-white/15 text-white text-xs font-mono focus:border-[#CCFF00] focus:outline-none"
               required
             />
           </div>
 
-          <div className="p-3.5 rounded-2xl bg-slate-900/60 border border-white/5 flex items-center gap-3 text-xs text-slate-400">
-            <ShieldCheck className="w-5 h-5 text-emerald-400 shrink-0" />
+          <div className="p-3.5 rounded-lg bg-[#07080A] border border-white/10 flex items-center gap-3 text-xs text-slate-400 font-grotesk">
+            <ShieldCheck className="w-5 h-5 text-[#CCFF00] shrink-0" />
             <span>Kargo bir sürücüyle eşleştiğinde emanet tutarı bloke edilir ve sürücüye verilecek 4 haneli teslim alma (pickup OTP) kodunuz anında üretilir.</span>
           </div>
 
           {/* Alt Butonlar */}
-          <div className="pt-3 border-t border-white/5 flex items-center justify-end gap-3">
+          <div className="pt-3 border-t border-white/10 flex items-center justify-end gap-3 bg-[#0D0F14]">
             <button
               type="button"
               onClick={onClose}
-              className="px-4 py-2.5 rounded-xl text-xs font-semibold text-slate-400 hover:text-white"
+              className="px-4 py-2.5 rounded-lg text-xs font-mono uppercase tracking-wider text-slate-400 hover:text-white"
             >
               Vazgeç
             </button>
             <button
               type="submit"
-              className="px-6 py-2.5 rounded-xl text-xs font-bold text-slate-950 bg-emerald-400 hover:bg-emerald-300 transition-all flex items-center gap-2 shadow-lg shadow-emerald-500/25"
+              className="px-6 py-2.5 rounded-lg text-xs font-syne font-extrabold uppercase tracking-wider text-black bg-[#CCFF00] hover:bg-[#b8e600] transition-all flex items-center gap-2 shadow-[0_4px_20px_rgba(204,255,0,0.3)] active:translate-y-0.5"
             >
-              <CheckCircle2 className="w-4 h-4" />
+              <CheckCircle2 className="w-4 h-4 stroke-[3]" />
               <span>Talebi İlan Havuzuna Bırak</span>
             </button>
           </div>

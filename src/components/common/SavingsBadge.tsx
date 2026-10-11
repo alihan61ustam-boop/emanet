@@ -1,5 +1,5 @@
 import React from 'react';
-import { ArrowDownRight, Sparkles, TrendingDown } from 'lucide-react';
+import { ArrowDownRight, Tag } from 'lucide-react';
 
 interface SavingsBadgeProps {
   marketPrice: number;
@@ -18,11 +18,11 @@ export const SavingsBadge: React.FC<SavingsBadgeProps> = ({
 }) => {
   if (size === 'sm') {
     return (
-      <div className="inline-flex items-center gap-2 px-2.5 py-1 rounded-lg bg-emerald-950/60 border border-emerald-500/30 text-xs">
-        <span className="text-slate-400 line-through">{marketPrice} TL</span>
-        <span className="text-emerald-400 font-bold">{emanetPrice} TL</span>
-        <span className="bg-emerald-500/20 text-emerald-300 font-semibold px-1.5 py-0.5 rounded text-[10px]">
-          %{discountRate} İndirim
+      <div className="inline-flex items-center gap-2 px-2.5 py-1 rounded bg-[#171922] border border-[#2A2E3D] text-xs font-mono">
+        <span className="text-[#8A8F9E] line-through">{marketPrice} TL</span>
+        <span className="text-[#FF4500] font-bold">{emanetPrice} TL</span>
+        <span className="bg-[#FF4500]/15 text-[#FF6332] font-semibold px-1.5 py-0.5 rounded text-[10px]">
+          -%{discountRate}
         </span>
       </div>
     );
@@ -30,37 +30,58 @@ export const SavingsBadge: React.FC<SavingsBadgeProps> = ({
 
   if (size === 'lg') {
     return (
-      <div className="p-4 rounded-2xl bg-gradient-to-br from-emerald-950/40 via-slate-900/80 to-slate-900 border border-emerald-500/30 shadow-lg relative overflow-hidden">
-        <div className="absolute top-0 right-0 w-32 h-32 bg-emerald-500/10 rounded-full blur-2xl pointer-events-none" />
+      <div className="relative p-5 rounded-xl bg-[#0F1117] border border-[#2A2E3D] shadow-2xl overflow-hidden chamfer-card">
+        {/* Üst İnce Güvenlik Şeridi */}
+        <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-[#FF4500] via-[#FF7A00] to-[#CCFF00]" />
         
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+        {/* Sahte Barkod ve Manifest Kodu */}
+        <div className="flex items-center justify-between pb-3 border-b border-dashed border-[#262A38] text-[11px] font-mono text-[#8C92A4]">
+          <div className="flex items-center gap-2">
+            <Tag className="w-3.5 h-3.5 text-[#FF4500]" />
+            <span className="font-bold tracking-wider text-white">TARİFE MANİFESTOSU</span>
+            <span className="text-[#595E70]">#EMANET-NET-25</span>
+          </div>
+          <div className="hidden sm:flex items-center gap-1 tracking-widest text-[#595E70] select-none text-[10px]">
+            |||||| | ||| |||| || | |||||
+          </div>
+        </div>
+
+        {/* Fiyat Karşılaştırması */}
+        <div className="pt-4 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
           <div className="space-y-1">
-            <div className="flex items-center gap-2 text-xs font-semibold text-emerald-400 uppercase tracking-wider">
-              <Sparkles className="w-3.5 h-3.5" />
-              <span>Emanet Fiyat Güvencesi</span>
+            <div className="text-xs font-mono uppercase tracking-wider text-[#9DA2B4]">
+              Standart Kargo Şirketleri
             </div>
-            <div className="text-sm text-slate-300">
-              Standart Kargo Fiyatı: <span className="line-through text-slate-400 font-medium">{marketPrice} TL</span>
+            <div className="text-sm text-[#7D8294] font-mono">
+              Piyasa Fiyatı: <span className="line-through text-white font-bold text-base">{marketPrice} TL</span>
             </div>
           </div>
 
           <div className="flex items-baseline gap-3">
-            <div className="text-3xl font-extrabold text-white tracking-tight">
-              {emanetPrice} <span className="text-lg text-emerald-400 font-bold">TL</span>
+            <div className="text-right">
+              <span className="text-[10px] font-mono uppercase text-[#FF4500] font-bold block">
+                ÖNERİLEN EMANET BEDELİ
+              </span>
+              <div className="text-3xl sm:text-4xl font-extrabold text-white font-display tracking-tight">
+                {emanetPrice} <span className="text-xl font-bold text-[#FF4500]">TL</span>
+              </div>
             </div>
-            <div className="flex items-center gap-1 px-2.5 py-1 rounded-full bg-emerald-500/20 border border-emerald-400/30 text-emerald-300 text-xs font-bold">
-              <TrendingDown className="w-3.5 h-3.5" />
-              <span>%{discountRate} Tasarruf</span>
+
+            <div className="px-3 py-1.5 rounded-lg bg-[#FF4500] text-black font-extrabold font-mono text-xs shadow-lg shadow-[#FF4500]/25 whitespace-nowrap">
+              -%{discountRate} İNDİRİM
             </div>
           </div>
         </div>
 
-        <div className="mt-3 pt-3 border-t border-white/5 flex items-center justify-between text-xs text-slate-400">
-          <span className="flex items-center gap-1.5">
-            <ArrowDownRight className="w-4 h-4 text-emerald-400" />
-            <strong className="text-emerald-300 font-semibold">{userSavings} TL Cebinizde Kalsın</strong>
+        {/* Perfore Çizgi ve Kazanç Özeti */}
+        <div className="mt-4 pt-3 border-t border-dashed border-[#262A38] flex flex-wrap items-center justify-between gap-2 text-xs font-mono">
+          <div className="flex items-center gap-2 text-[#CCFF00]">
+            <ArrowDownRight className="w-4 h-4" />
+            <span className="font-bold tracking-wide">{userSavings} TL CEBİNİZDE KALIR</span>
+          </div>
+          <span className="text-[11px] text-[#6E7385]">
+            Doğrudan sürücüyle paylaşım avantajı
           </span>
-          <span className="text-[11px] text-slate-500">Piyasa bazlı dinamik tarife</span>
         </div>
       </div>
     );
@@ -68,21 +89,21 @@ export const SavingsBadge: React.FC<SavingsBadgeProps> = ({
 
   // Default 'md'
   return (
-    <div className="p-3 rounded-xl bg-slate-900/90 border border-emerald-500/20 text-sm">
+    <div className="p-3.5 rounded-xl bg-[#0F1117] border border-[#2A2E3D] text-xs font-mono space-y-2">
       <div className="flex items-center justify-between gap-2">
-        <span className="text-slate-400 text-xs">
-          Standart Kargo: <span className="line-through text-slate-500">{marketPrice} TL</span>
+        <span className="text-[#8C92A4]">
+          Piyasa: <span className="line-through text-[#666B7D]">{marketPrice} TL</span>
         </span>
-        <span className="text-emerald-400 font-bold">
-          Emanet: {emanetPrice} TL
+        <span className="text-white font-bold text-sm">
+          Emanet: <span className="text-[#FF4500]">{emanetPrice} TL</span>
         </span>
       </div>
-      <div className="mt-1 flex items-center justify-between text-xs">
-        <span className="text-emerald-300/90 font-medium">
-          {userSavings} TL Cebinizde Kalsın
+      <div className="flex items-center justify-between pt-1 border-t border-dashed border-[#242735]">
+        <span className="text-[#CCFF00] font-bold">
+          +{userSavings} TL Tasarruf
         </span>
-        <span className="text-emerald-400 bg-emerald-500/10 px-1.5 py-0.5 rounded text-[11px] font-semibold">
-          %{discountRate} Tasarruf
+        <span className="text-[#FF4500] bg-[#FF4500]/15 px-1.5 py-0.5 rounded text-[10px] font-bold">
+          -%{discountRate}
         </span>
       </div>
     </div>

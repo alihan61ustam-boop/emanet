@@ -4,16 +4,17 @@ import {
   Car, 
   MapPin, 
   Calendar, 
-  Layers, 
   Package, 
   CheckCircle2, 
   Sparkles, 
   AlertCircle,
   Clock,
-  Compass
+  Compass,
+  ArrowRight,
+  Shield
 } from 'lucide-react';
 import { TURKISH_CITIES, getCityByName } from '../../lib/turkishCities';
-import { calculateCorridorCities, generateFallbackRoute, fetchOrGenerateRoute } from '../../lib/gis';
+import { calculateCorridorCities, fetchOrGenerateRoute } from '../../lib/gis';
 import { RouteMap } from '../map/RouteMap';
 import { RouteCorridorBadge } from '../map/RouteCorridorBadge';
 import { CURRENT_USER, store } from '../../lib/mockStore';
@@ -58,19 +59,16 @@ export const CreateTripModal: React.FC<CreateTripModalProps> = ({
     setLoading(true);
 
     const compute = async () => {
-      // OSRM veya fallback ile rotayı al
       const routeData = await fetchOrGenerateRoute(origin, dest);
       if (!isMounted) return;
 
       setRouteCoordinates(routeData.coordinates);
       setDistanceKm(routeData.distanceKm);
 
-      // 30 KM Tampon Bölge ve Şehirleri Çıkar
       const corridor = calculateCorridorCities(routeData.coordinates, originCity, destCity, 30);
       setServiceCities(corridor.serviceCities);
       setBufferPolygon(corridor.bufferPolygon);
 
-      // Geçici trip nesnesi ile havuzdaki bekleyen paketleri tara
       const tempTrip: DriverTrip = {
         id: 'temp',
         driverId: CURRENT_USER.id,
@@ -148,28 +146,33 @@ export const CreateTripModal: React.FC<CreateTripModalProps> = ({
   };
 
   return (
-    <div className="fixed inset-0 z-[9990] flex items-center justify-center p-4 bg-slate-950/80 backdrop-blur-md animate-in fade-in duration-200">
-      <div className="relative w-full max-w-4xl rounded-3xl bg-[#0D1322] border border-white/10 shadow-2xl overflow-hidden flex flex-col max-h-[92vh]">
-        {/* Üst Bar */}
-        <div className="p-6 pb-4 border-b border-white/5 flex items-center justify-between">
+    <div className="fixed inset-0 z-[9990] flex items-center justify-center p-4 bg-black/85 backdrop-blur-md animate-in fade-in duration-200">
+      <div className="relative w-full max-w-4xl chamfer-card bg-[#0D0F14] border-2 border-white/10 shadow-[0_25px_80px_rgba(0,0,0,0.95)] overflow-hidden flex flex-col max-h-[92vh]">
+        {/* Üst Şerit: Industrial Dispatch Bar */}
+        <div className="p-5 border-b border-white/10 flex items-center justify-between bg-[#12151C]">
           <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-2xl bg-emerald-500/20 border border-emerald-500/30 flex items-center justify-center text-emerald-400">
-              <Car className="w-5 h-5" />
+            <div className="w-10 h-10 rounded-lg bg-[#FF4500] text-black flex items-center justify-center shadow-[0_0_15px_rgba(255,69,0,0.4)]">
+              <Car className="w-5 h-5 stroke-[2.5]" />
             </div>
             <div>
-              <h2 className="text-lg font-bold text-white tracking-tight">
+              <div className="flex items-center gap-2">
+                <span className="font-mono text-[10px] text-[#FF4500] uppercase tracking-widest font-bold">
+                  GÜZERGAH MANİFESTOSU #NEW
+                </span>
+                <span className="font-mono text-[10px] px-1.5 py-0.2 rounded bg-white/10 text-white/60">
+                  DISPATCH FORM
+                </span>
+              </div>
+              <h2 className="text-lg font-syne font-extrabold text-white tracking-tight">
                 Yeni Sürücü Güzergahı Aç
               </h2>
-              <p className="text-xs text-slate-400">
-                Aracınızın boş bagaj kapasitesini ilan edin, yol üstü kargolarla eşleşin
-              </p>
             </div>
           </div>
 
           <button
             type="button"
             onClick={onClose}
-            className="p-2 rounded-xl text-slate-400 hover:text-white hover:bg-white/5 transition-all"
+            className="p-2 rounded-lg text-slate-400 hover:text-white hover:bg-white/10 transition-all font-mono text-xs"
           >
             <X className="w-5 h-5" />
           </button>
@@ -182,36 +185,36 @@ export const CreateTripModal: React.FC<CreateTripModalProps> = ({
             <div className="lg:col-span-5 space-y-4">
               <div className="grid grid-cols-2 gap-3">
                 <div className="space-y-1.5">
-                  <label className="text-xs font-semibold text-slate-300 flex items-center gap-1.5">
-                    <MapPin className="w-3.5 h-3.5 text-emerald-400" />
-                    <span>Kalkış Şehri</span>
+                  <label className="text-[11px] font-mono uppercase tracking-wider text-slate-300 flex items-center gap-1.5">
+                    <MapPin className="w-3.5 h-3.5 text-[#CCFF00]" />
+                    <span>Kalkış İli</span>
                   </label>
                   <select
                     value={originCity}
                     onChange={e => setOriginCity(e.target.value)}
-                    className="w-full px-3 py-2.5 rounded-xl bg-slate-900 border border-white/10 text-white text-xs font-medium focus:border-emerald-500 focus:outline-none"
+                    className="w-full px-3 py-2.5 rounded-lg bg-[#07080A] border border-white/15 text-white text-xs font-mono font-bold focus:border-[#FF4500] focus:outline-none"
                   >
                     {TURKISH_CITIES.map(c => (
                       <option key={c.plate} value={c.name}>
-                        {c.name} ({c.plate})
+                        {c.plate} - {c.name}
                       </option>
                     ))}
                   </select>
                 </div>
 
                 <div className="space-y-1.5">
-                  <label className="text-xs font-semibold text-slate-300 flex items-center gap-1.5">
-                    <MapPin className="w-3.5 h-3.5 text-purple-400" />
-                    <span>Varış Şehri</span>
+                  <label className="text-[11px] font-mono uppercase tracking-wider text-slate-300 flex items-center gap-1.5">
+                    <MapPin className="w-3.5 h-3.5 text-[#FF4500]" />
+                    <span>Varış İli</span>
                   </label>
                   <select
                     value={destCity}
                     onChange={e => setDestCity(e.target.value)}
-                    className="w-full px-3 py-2.5 rounded-xl bg-slate-900 border border-white/10 text-white text-xs font-medium focus:border-purple-500 focus:outline-none"
+                    className="w-full px-3 py-2.5 rounded-lg bg-[#07080A] border border-white/15 text-white text-xs font-mono font-bold focus:border-[#FF4500] focus:outline-none"
                   >
                     {TURKISH_CITIES.map(c => (
                       <option key={c.plate} value={c.name}>
-                        {c.name} ({c.plate})
+                        {c.plate} - {c.name}
                       </option>
                     ))}
                   </select>
@@ -219,26 +222,29 @@ export const CreateTripModal: React.FC<CreateTripModalProps> = ({
               </div>
 
               <div className="space-y-1.5">
-                <label className="text-xs font-semibold text-slate-300 flex items-center gap-1.5">
-                  <Calendar className="w-3.5 h-3.5 text-blue-400" />
+                <label className="text-[11px] font-mono uppercase tracking-wider text-slate-300 flex items-center gap-1.5">
+                  <Calendar className="w-3.5 h-3.5 text-[#00E5FF]" />
                   <span>Kalkış Tarihi & Saati</span>
                 </label>
                 <input
                   type="datetime-local"
                   value={departureDate}
                   onChange={e => setDepartureDate(e.target.value)}
-                  className="w-full px-3 py-2.5 rounded-xl bg-slate-900 border border-white/10 text-white text-xs font-medium focus:border-emerald-500 focus:outline-none"
+                  className="w-full px-3 py-2.5 rounded-lg bg-[#07080A] border border-white/15 text-white text-xs font-mono font-bold focus:border-[#FF4500] focus:outline-none"
                   required
                 />
               </div>
 
-              <div className="space-y-1.5">
+              {/* Bagaj Kapasite Göstergesi */}
+              <div className="p-3.5 rounded-lg bg-[#07080A] border border-white/10 space-y-2">
                 <div className="flex items-center justify-between text-xs">
-                  <label className="font-semibold text-slate-300 flex items-center gap-1.5">
-                    <Package className="w-3.5 h-3.5 text-amber-400" />
-                    <span>Boş Bagaj Hacmi (Desi)</span>
+                  <label className="font-mono uppercase text-[11px] text-slate-300 flex items-center gap-1.5">
+                    <Package className="w-3.5 h-3.5 text-[#FF4500]" />
+                    <span>Boş Bagaj Hacmi</span>
                   </label>
-                  <span className="font-bold text-amber-400 font-mono">{capacityDesi} Desi</span>
+                  <span className="font-mono font-extrabold text-[#CCFF00] text-sm">
+                    {capacityDesi} DESİ
+                  </span>
                 </div>
                 <input
                   type="range"
@@ -247,34 +253,38 @@ export const CreateTripModal: React.FC<CreateTripModalProps> = ({
                   step="5"
                   value={capacityDesi}
                   onChange={e => setCapacityDesi(Number(e.target.value))}
-                  className="w-full accent-amber-500 cursor-pointer"
+                  className="w-full accent-[#FF4500] cursor-pointer"
                 />
-                <div className="flex justify-between text-[10px] text-slate-500">
-                  <span>5 Desi (1 Koli)</span>
-                  <span>40 Desi (Orta Bagaj)</span>
-                  <span>100 Desi (Geniş SUV/SW)</span>
+                <div className="flex justify-between text-[10px] font-mono text-slate-500">
+                  <span>5 Desi (Koli)</span>
+                  <span>40 Desi (Orta)</span>
+                  <span>100 Desi (SUV)</span>
                 </div>
               </div>
 
               <div className="space-y-1.5">
-                <label className="text-xs font-semibold text-slate-300">Araç Bilgisi</label>
+                <label className="text-[11px] font-mono uppercase tracking-wider text-slate-300">
+                  Araç Modeli & Bagaj Hacmi
+                </label>
                 <input
                   type="text"
                   value={vehicleInfo}
                   onChange={e => setVehicleInfo(e.target.value)}
-                  placeholder="Örn: 2022 Volkswagen Passat Sedan"
-                  className="w-full px-3 py-2 rounded-xl bg-slate-900 border border-white/10 text-white text-xs focus:border-emerald-500 focus:outline-none"
+                  placeholder="Örn: 2022 Passat (586L Bagaj)"
+                  className="w-full px-3 py-2 rounded-lg bg-[#07080A] border border-white/15 text-white text-xs font-grotesk focus:border-[#FF4500] focus:outline-none"
                 />
               </div>
 
               <div className="space-y-1.5">
-                <label className="text-xs font-semibold text-slate-300">Sürücü Notu</label>
+                <label className="text-[11px] font-mono uppercase tracking-wider text-slate-300">
+                  Sürücü Notu & Teslimat Tercihleri
+                </label>
                 <textarea
                   value={notes}
                   onChange={e => setNotes(e.target.value)}
                   rows={2}
-                  placeholder="Teslimat noktaları, otoyol çıkışları veya tercihler..."
-                  className="w-full px-3 py-2 rounded-xl bg-slate-900 border border-white/10 text-white text-xs focus:border-emerald-500 focus:outline-none"
+                  placeholder="Otoyol gişeleri, buluşma noktaları..."
+                  className="w-full px-3 py-2 rounded-lg bg-[#07080A] border border-white/15 text-white text-xs font-grotesk focus:border-[#FF4500] focus:outline-none"
                 />
               </div>
             </div>
@@ -282,7 +292,7 @@ export const CreateTripModal: React.FC<CreateTripModalProps> = ({
             {/* Sağ Taraf: Canlı GIS Haritası, Koridor Analizi ve Bekleyen Kargolar */}
             <div className="lg:col-span-7 space-y-4 flex flex-col">
               {/* Canlı GIS Haritası */}
-              <div className="h-56 w-full rounded-2xl overflow-hidden border border-white/10 relative">
+              <div className="h-56 w-full rounded-xl overflow-hidden border border-white/15 relative">
                 <RouteMap
                   routeCoordinates={routeCoordinates}
                   bufferPolygon={bufferPolygon}
@@ -294,13 +304,13 @@ export const CreateTripModal: React.FC<CreateTripModalProps> = ({
               </div>
 
               {/* Koridor Bilgisi */}
-              <div className="p-3.5 rounded-xl bg-slate-900/90 border border-white/5 space-y-2">
+              <div className="p-3.5 rounded-lg bg-[#07080A] border border-white/10 space-y-2">
                 <div className="flex items-center justify-between text-xs">
-                  <span className="font-semibold text-slate-300 flex items-center gap-1.5">
-                    <Compass className="w-3.5 h-3.5 text-blue-400" />
-                    <span>Yol Üstünde Uğranabilecek Şehirler (Rotanıza 30 km Mesafede)</span>
+                  <span className="font-mono text-[11px] uppercase tracking-wider text-slate-300 flex items-center gap-1.5">
+                    <Compass className="w-3.5 h-3.5 text-[#00E5FF]" />
+                    <span>Yol Üstü Durakları (±30 KM Koridoru)</span>
                   </span>
-                  <span className="text-emerald-400 font-mono font-bold">~{distanceKm} km</span>
+                  <span className="text-[#CCFF00] font-mono font-extrabold">~{distanceKm} km</span>
                 </div>
 
                 <RouteCorridorBadge
@@ -312,41 +322,41 @@ export const CreateTripModal: React.FC<CreateTripModalProps> = ({
 
               {/* Kesişen Havuz Kargoları Uyarısı */}
               {waitingPackages.length > 0 ? (
-                <div className="p-3.5 rounded-xl bg-emerald-950/40 border border-emerald-500/30 flex items-start gap-3 text-xs">
-                  <Sparkles className="w-4 h-4 text-emerald-400 shrink-0 mt-0.5" />
+                <div className="p-4 rounded-lg bg-[#181106] border border-[#FF4500]/50 flex items-start gap-3 text-xs">
+                  <Sparkles className="w-4 h-4 text-[#FF4500] shrink-0 mt-0.5" />
                   <div className="space-y-1">
-                    <div className="font-bold text-white">
-                      Rotanız üzerinde taşınmayı bekleyen <span className="text-emerald-300 font-extrabold">{waitingPackages.length} kargo</span> var!
+                    <div className="font-syne font-bold text-white text-sm">
+                      Rotanız üzerinde taşınmayı bekleyen <span className="text-[#CCFF00] font-mono font-extrabold">{waitingPackages.length} adet kargo</span> tespit edildi!
                     </div>
-                    <p className="text-slate-300">
-                      Rotanızı açtıktan sonra bu kargoları doğrudan tek tıkla onaylayıp bagajınıza ekleyebilirsiniz.
+                    <p className="text-slate-300 font-grotesk">
+                      Güzergahınızı açtığınızda bu kargoları doğrudan tek tıkla onaylayıp bagajınıza ekleyebilirsiniz.
                     </p>
                   </div>
                 </div>
               ) : (
-                <div className="p-3 rounded-xl bg-slate-900/60 border border-white/5 flex items-center gap-2 text-xs text-slate-400">
+                <div className="p-3 rounded-lg bg-[#07080A] border border-white/5 flex items-center gap-2 text-xs text-slate-400 font-grotesk">
                   <AlertCircle className="w-4 h-4 text-slate-500 shrink-0" />
-                  <span>Şu an bu hatta bekleyen kargo yok. İlanınız açıldığında yeni kargo talepleri size iletilecektir.</span>
+                  <span>Şu an bu hatta bekleyen talep yok. İlanınız açıldığında bildirim alacaksınız.</span>
                 </div>
               )}
             </div>
           </div>
 
           {/* Alt Butonlar */}
-          <div className="pt-4 border-t border-white/5 flex items-center justify-end gap-3">
+          <div className="pt-4 border-t border-white/10 flex items-center justify-end gap-3 bg-[#0D0F14]">
             <button
               type="button"
               onClick={onClose}
-              className="px-4 py-2.5 rounded-xl text-xs font-semibold text-slate-300 hover:text-white hover:bg-white/5 border border-white/10 transition-all"
+              className="px-5 py-2.5 rounded-lg text-xs font-mono uppercase tracking-wider text-slate-300 hover:text-white hover:bg-white/5 border border-white/10 transition-all"
             >
               İptal
             </button>
             <button
               type="submit"
               disabled={loading || originCity === destCity}
-              className="px-6 py-2.5 rounded-xl text-xs font-bold text-slate-950 bg-emerald-400 hover:bg-emerald-300 transition-all flex items-center gap-2 shadow-lg shadow-emerald-500/25 disabled:opacity-50"
+              className="px-6 py-2.5 rounded-lg text-xs font-syne font-extrabold tracking-wider uppercase text-black bg-[#FF4500] hover:bg-[#e03d00] transition-all flex items-center gap-2 shadow-[0_4px_20px_rgba(255,69,0,0.4)] disabled:opacity-50 active:translate-y-0.5"
             >
-              <CheckCircle2 className="w-4 h-4" />
+              <CheckCircle2 className="w-4 h-4 stroke-[3]" />
               <span>Güzergahı Başlat & İlanı Aç</span>
             </button>
           </div>

@@ -36,7 +36,6 @@ export const RouteMap: React.FC<RouteMapProps> = ({
       mapInstanceRef.current = null;
     }
 
-    // Türkiye merkez koordinatları
     const map = L.map(mapContainerRef.current, {
       center: [39.0, 35.0],
       zoom: 6,
@@ -46,7 +45,7 @@ export const RouteMap: React.FC<RouteMapProps> = ({
 
     L.control.zoom({ position: 'bottomright' }).addTo(map);
 
-    // %100 Ücretsiz, API Anahtarı İstemeyen Standart OpenStreetMap Katmanı
+    // %100 Ücretsiz OpenStreetMap (API anahtarı gerektirmez)
     L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
       maxZoom: 19,
       subdomains: ['a', 'b', 'c']
@@ -74,16 +73,16 @@ export const RouteMap: React.FC<RouteMapProps> = ({
 
     const bounds = L.latLngBounds([]);
 
-    // 1. 30 KM Yol Üstü Güvenli Koridor Poligonu
+    // 1. 30 KM Yol Üstü Tampon Bölge Poligonu
     if (showBuffer && bufferPolygon) {
       try {
         const bufferLayer = L.geoJSON(bufferPolygon, {
           style: {
-            color: '#10b981',
-            weight: 2,
-            dashArray: '5, 5',
-            fillColor: '#10b981',
-            fillOpacity: 0.16
+            color: '#FF4500',
+            weight: 1.5,
+            dashArray: '4, 4',
+            fillColor: '#FF4500',
+            fillOpacity: 0.12
           }
         });
         group.addLayer(bufferLayer);
@@ -92,19 +91,19 @@ export const RouteMap: React.FC<RouteMapProps> = ({
       }
     }
 
-    // 2. Rota Çizgisi (Vurgulu ve Parlak)
+    // 2. Rota Çizgisi (Safety Flame Orange)
     const glowLine = L.polyline(routeCoordinates, {
-      color: '#34d399',
+      color: '#FF4500',
       weight: 8,
-      opacity: 0.35,
+      opacity: 0.25,
       lineCap: 'round',
       lineJoin: 'round'
     });
     group.addLayer(glowLine);
 
     const mainLine = L.polyline(routeCoordinates, {
-      color: '#059669',
-      weight: 4,
+      color: '#FF4500',
+      weight: 3.5,
       opacity: 0.95,
       lineCap: 'round',
       lineJoin: 'round'
@@ -121,9 +120,9 @@ export const RouteMap: React.FC<RouteMapProps> = ({
       const startIcon = L.divIcon({
         className: 'custom-pin-start',
         html: `
-          <div class="relative flex items-center justify-center">
-            <span class="animate-ping absolute inline-flex h-7 w-7 rounded-full bg-emerald-400 opacity-75"></span>
-            <div class="relative inline-flex items-center justify-center w-7 h-7 rounded-full bg-emerald-500 text-slate-950 shadow-lg border-2 border-white font-bold text-xs">
+          <div class="relative flex items-center justify-center font-mono font-bold">
+            <span class="animate-ping absolute inline-flex h-6 w-6 rounded-full bg-[#FF4500] opacity-75"></span>
+            <div class="relative inline-flex items-center justify-center w-7 h-7 rounded-md bg-[#FF4500] text-black shadow-xl border border-white font-black text-xs">
               A
             </div>
           </div>
@@ -134,10 +133,10 @@ export const RouteMap: React.FC<RouteMapProps> = ({
 
       const startMarker = L.marker(startCoord, { icon: startIcon })
         .bindPopup(`
-          <div class="p-2 text-xs">
-            <div class="font-bold text-emerald-400 text-sm">Çıkış Şehri</div>
-            <div class="text-white font-medium mt-0.5">${originCity}</div>
-            <div class="text-slate-400 mt-1">Yolculuğun başladığı nokta</div>
+          <div class="p-2 font-mono text-xs">
+            <div class="font-bold text-[#FF4500] text-sm tracking-wide">[ÇIKIŞ NOKTASI]</div>
+            <div class="text-white font-bold text-base mt-0.5">${originCity}</div>
+            <div class="text-[#8E93A6] text-[11px] mt-1">Yolculuğun başladığı il merkezi</div>
           </div>
         `);
       group.addLayer(startMarker);
@@ -147,9 +146,9 @@ export const RouteMap: React.FC<RouteMapProps> = ({
       const endIcon = L.divIcon({
         className: 'custom-pin-end',
         html: `
-          <div class="relative flex items-center justify-center">
-            <span class="animate-ping absolute inline-flex h-7 w-7 rounded-full bg-purple-400 opacity-75"></span>
-            <div class="relative inline-flex items-center justify-center w-7 h-7 rounded-full bg-purple-500 text-white shadow-lg border-2 border-white font-bold text-xs">
+          <div class="relative flex items-center justify-center font-mono font-bold">
+            <span class="animate-ping absolute inline-flex h-6 w-6 rounded-full bg-[#CCFF00] opacity-75"></span>
+            <div class="relative inline-flex items-center justify-center w-7 h-7 rounded-md bg-[#CCFF00] text-black shadow-xl border border-black font-black text-xs">
               B
             </div>
           </div>
@@ -160,16 +159,16 @@ export const RouteMap: React.FC<RouteMapProps> = ({
 
       const endMarker = L.marker(endCoord, { icon: endIcon })
         .bindPopup(`
-          <div class="p-2 text-xs">
-            <div class="font-bold text-purple-400 text-sm">Varış Şehri</div>
-            <div class="text-white font-medium mt-0.5">${destCity}</div>
-            <div class="text-slate-400 mt-1">Yolculuğun tamamlandığı nokta</div>
+          <div class="p-2 font-mono text-xs">
+            <div class="font-bold text-[#CCFF00] text-sm tracking-wide">[VARIŞ NOKTASI]</div>
+            <div class="text-white font-bold text-base mt-0.5">${destCity}</div>
+            <div class="text-[#8E93A6] text-[11px] mt-1">Yolculuğun sonlandığı il merkezi</div>
           </div>
         `);
       group.addLayer(endMarker);
     }
 
-    // 4. Koridor Üzerindeki Yol Üstü Durak Şehirleri
+    // 4. Yol Üstü Durak Şehirleri
     if (showCorridorMarkers && corridorCities.length > 2) {
       const intermediate = corridorCities.slice(1, -1);
       intermediate.forEach((cityName, idx) => {
@@ -180,7 +179,7 @@ export const RouteMap: React.FC<RouteMapProps> = ({
           const midIcon = L.divIcon({
             className: 'custom-pin-mid',
             html: `
-              <div class="w-3.5 h-3.5 rounded-full bg-amber-400 border-2 border-slate-900 shadow-md"></div>
+              <div class="w-3.5 h-3.5 bg-[#FFB800] border-2 border-black rotate-45 shadow-md"></div>
             `,
             iconSize: [14, 14],
             iconAnchor: [7, 7]
@@ -188,10 +187,10 @@ export const RouteMap: React.FC<RouteMapProps> = ({
 
           const marker = L.marker(approxCoord, { icon: midIcon })
             .bindPopup(`
-              <div class="p-1.5 text-xs">
-                <span class="px-1.5 py-0.5 rounded bg-amber-500/20 text-amber-300 font-semibold text-[10px]">Yol Üstü Durak</span>
+              <div class="p-1.5 font-mono text-xs">
+                <span class="px-1.5 py-0.5 rounded bg-[#FFB800]/20 text-[#FFB800] font-bold text-[10px]">YOL ÜSTÜ DURAK</span>
                 <div class="font-bold text-white mt-1 text-sm">${cityName}</div>
-                <div class="text-slate-400 text-[11px] mt-0.5">Sürücünün kargo alıp bırakabileceği nokta</div>
+                <div class="text-[#8E93A6] text-[11px] mt-0.5">30 km koridoru içinde kargo teslim noktası</div>
               </div>
             `);
           group.addLayer(marker);
@@ -213,41 +212,41 @@ export const RouteMap: React.FC<RouteMapProps> = ({
   };
 
   return (
-    <div className={`relative rounded-2xl overflow-hidden border border-white/10 shadow-2xl ${className}`}>
+    <div className={`relative rounded-xl overflow-hidden border border-[#232635] shadow-2xl ${className}`}>
       {/* Harita Konteyneri */}
       <div ref={mapContainerRef} className="w-full h-full" />
 
-      {/* Harita Üstü Kontrol Paneli (Basit ve Anlaşılır Başlıklar) */}
-      <div className="absolute top-3 left-3 z-[1000] flex flex-wrap items-center gap-2">
-        <div className="px-3 py-1.5 rounded-xl bg-slate-950/85 backdrop-blur-md border border-white/10 text-xs font-semibold text-slate-200 flex items-center gap-2 shadow-lg">
-          <ShieldCheck className="w-3.5 h-3.5 text-emerald-400" />
-          <span>30 km Yol Üstü Alanı</span>
+      {/* Harita Üstü Kontroller */}
+      <div className="absolute top-3 left-3 z-[1000] flex flex-wrap items-center gap-2 font-mono">
+        <div className="px-3 py-1.5 rounded-lg bg-[#0E1017]/90 backdrop-blur-md border border-[#2A2E3D] text-[11px] font-bold text-[#D0D5E4] flex items-center gap-1.5 shadow-lg">
+          <ShieldCheck className="w-3.5 h-3.5 text-[#FF4500]" />
+          <span>30 KM YOL KORİDORU</span>
         </div>
 
         <button
           type="button"
           onClick={() => setShowBuffer(!showBuffer)}
-          className={`px-3 py-1.5 rounded-xl text-xs font-semibold backdrop-blur-md border shadow-lg transition-all flex items-center gap-1.5 ${
+          className={`px-3 py-1.5 rounded-lg text-[11px] font-bold backdrop-blur-md border shadow-lg transition-all flex items-center gap-1.5 ${
             showBuffer
-              ? 'bg-emerald-950/80 border-emerald-500/40 text-emerald-300'
-              : 'bg-slate-950/80 border-white/10 text-slate-400 hover:text-white'
+              ? 'bg-[#FF4500]/20 border-[#FF4500]/50 text-[#FF6E3D]'
+              : 'bg-[#0E1017]/90 border-[#2A2E3D] text-[#7E8498] hover:text-white'
           }`}
         >
           {showBuffer ? <Eye className="w-3.5 h-3.5" /> : <EyeOff className="w-3.5 h-3.5" />}
-          <span>Yol Çevresi ({showBuffer ? 'Açık' : 'Kapalı'})</span>
+          <span>Yol Alanı ({showBuffer ? 'AÇIK' : 'KAPALI'})</span>
         </button>
 
         <button
           type="button"
           onClick={() => setShowCorridorMarkers(!showCorridorMarkers)}
-          className={`px-3 py-1.5 rounded-xl text-xs font-semibold backdrop-blur-md border shadow-lg transition-all flex items-center gap-1.5 ${
+          className={`px-3 py-1.5 rounded-lg text-[11px] font-bold backdrop-blur-md border shadow-lg transition-all flex items-center gap-1.5 ${
             showCorridorMarkers
-              ? 'bg-amber-950/80 border-amber-500/40 text-amber-300'
-              : 'bg-slate-950/80 border-white/10 text-slate-400 hover:text-white'
+              ? 'bg-[#FFB800]/20 border-[#FFB800]/50 text-[#FFB800]'
+              : 'bg-[#0E1017]/90 border-[#2A2E3D] text-[#7E8498] hover:text-white'
           }`}
         >
           <Layers className="w-3.5 h-3.5" />
-          <span>Yol Üstü Şehirler</span>
+          <span>Duraklar</span>
         </button>
       </div>
 
@@ -256,26 +255,26 @@ export const RouteMap: React.FC<RouteMapProps> = ({
         type="button"
         onClick={handleFitBounds}
         title="Rotaya Odaklan"
-        className="absolute top-3 right-3 z-[1000] p-2 rounded-xl bg-slate-950/85 backdrop-blur-md border border-white/10 text-slate-300 hover:text-white hover:bg-slate-900 transition-all shadow-lg"
+        className="absolute top-3 right-3 z-[1000] p-2 rounded-lg bg-[#0E1017]/90 backdrop-blur-md border border-[#2A2E3D] text-[#8C92A4] hover:text-white hover:border-[#FF4500] transition-all shadow-lg"
       >
         <Maximize2 className="w-4 h-4" />
       </button>
 
-      {/* Alt Bilgi Barı */}
+      {/* Alt Bilgi Bandı */}
       <div className="absolute bottom-3 left-3 right-16 z-[1000] pointer-events-none">
-        <div className="inline-flex items-center gap-3 px-3.5 py-1.5 rounded-xl bg-slate-950/90 backdrop-blur-md border border-white/10 text-xs text-slate-300 pointer-events-auto">
-          <div className="flex items-center gap-1.5">
-            <span className="w-2.5 h-2.5 rounded-full bg-emerald-400"></span>
-            <span className="font-semibold text-white">{originCity}</span>
+        <div className="inline-flex items-center gap-3 px-3.5 py-1.5 rounded-lg bg-[#0C0E14]/95 backdrop-blur-md border border-[#262A38] text-xs font-mono text-[#D0D5E4] pointer-events-auto">
+          <div className="flex items-center gap-1.5 font-bold">
+            <span className="w-2 h-2 rounded bg-[#FF4500]"></span>
+            <span>{originCity}</span>
           </div>
-          <span className="text-slate-500">→</span>
-          <div className="flex items-center gap-1.5">
-            <span className="w-2.5 h-2.5 rounded-full bg-purple-400"></span>
-            <span className="font-semibold text-white">{destCity}</span>
+          <span className="text-[#595E70]">➔</span>
+          <div className="flex items-center gap-1.5 font-bold">
+            <span className="w-2 h-2 rounded bg-[#CCFF00]"></span>
+            <span>{destCity}</span>
           </div>
           {corridorCities.length > 0 && (
-            <span className="text-slate-400 hidden sm:inline">
-              ({corridorCities.length} şehir yol üstü güzergahında)
+            <span className="text-[#787E92] hidden sm:inline text-[11px]">
+              ({corridorCities.length} durak şehri aktif)
             </span>
           )}
         </div>

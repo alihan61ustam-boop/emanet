@@ -5,10 +5,11 @@ import {
   ShieldCheck, 
   Sparkles, 
   TrendingDown, 
-  MapPin, 
   Layers, 
+  Plus,
   ArrowRight,
-  Plus
+  Radio,
+  Compass
 } from 'lucide-react';
 import { Header, ActiveTab } from './components/common/Header';
 import { SystemTourModal } from './components/common/SystemTourModal';
@@ -27,7 +28,6 @@ import { DriverTrip, SenderPackage, MatchAndEscrow } from './types';
 import { calculateCorridorCities } from './lib/gis';
 
 export function App() {
-  // Varsayılan ilk sekme: Kargo Gönder & Ara (Son kullanıcı için en sade başlangıç)
   const [activeTab, setActiveTab] = useState<ActiveTab>('sender');
   const [trips, setTrips] = useState<DriverTrip[]>(() => store.getTrips());
   const [packages, setPackages] = useState<SenderPackage[]>(() => store.getPackages());
@@ -35,7 +35,6 @@ export function App() {
   
   const [selectedTrip, setSelectedTrip] = useState<DriverTrip | null>(() => store.getTrips()[0] || null);
 
-  // Açılış Bilgilendirme Modalı
   const [isTourOpen, setIsTourOpen] = useState<boolean>(() => {
     return localStorage.getItem('emanet_hide_tour_modal') !== 'true';
   });
@@ -80,7 +79,7 @@ export function App() {
   const pendingEscrowCount = matches.filter(m => m.paymentStatus === 'held_in_escrow').length;
 
   return (
-    <div className="min-h-screen bg-[#080C14] text-slate-100 flex flex-col font-sans">
+    <div className="min-h-screen bg-[#08090C] text-slate-100 flex flex-col font-sans selection:bg-[#FF4500] selection:text-black">
       {/* Üst Menü */}
       <Header
         activeTab={activeTab}
@@ -90,37 +89,40 @@ export function App() {
         pendingEscrowCount={pendingEscrowCount}
       />
 
-      {/* Ana Sayfa */}
+      {/* Ana Gövde */}
       <main className="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-6 space-y-6">
-        {/* Karşılama ve Değer Önerisi Alanı (Sade & Anlaşılır) */}
-        <div className="p-6 sm:p-8 rounded-3xl bg-gradient-to-r from-slate-900/90 via-slate-900/80 to-emerald-950/40 border border-white/10 shadow-2xl relative overflow-hidden">
-          <div className="absolute top-0 right-0 w-80 h-80 bg-emerald-500/10 rounded-full blur-3xl pointer-events-none" />
+        {/* Karşılama ve Değer Önerisi Alanı: Manifesto 30KM Hero Terminal */}
+        <div className="chamfer-card p-6 sm:p-8 bg-gradient-to-r from-[#0F1117] via-[#0E1015] to-[#161208] border-2 border-white/10 shadow-[0_20px_60px_rgba(0,0,0,0.85)] relative overflow-hidden">
+          {/* Arka Plan Vurgu Işığı */}
+          <div className="absolute top-0 right-0 w-96 h-96 bg-[#FF4500]/10 rounded-full blur-3xl pointer-events-none" />
 
           <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-6 relative z-10">
-            <div className="space-y-3 max-w-2xl">
-              <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-emerald-500/15 border border-emerald-500/30 text-emerald-300 text-xs font-bold uppercase tracking-wider">
-                <Sparkles className="w-3.5 h-3.5" />
-                <span>P2P Bagaj & Kargo Paylaşımı</span>
+            <div className="space-y-3.5 max-w-2xl">
+              <div className="inline-flex items-center gap-2 px-3 py-1 rounded bg-[#FF4500]/15 border border-[#FF4500]/30 text-[#FF4500] font-mono text-xs font-bold uppercase tracking-widest">
+                <Radio className="w-3.5 h-3.5 animate-pulse" />
+                <span>P2P OTOYOL BAGAJ & KARGO AĞI</span>
               </div>
-              <h2 className="text-2xl sm:text-3xl font-extrabold text-white tracking-tight leading-tight">
-                Şehirler Arası Boş Bagajını Paylaş, <span className="text-emerald-400">%25 İndirimle</span> Kargo Gönder
+
+              <h2 className="text-2xl sm:text-4xl font-syne font-extrabold text-white tracking-tight leading-tight">
+                Şehirler Arası Boş Bagajını Paylaş, <span className="text-[#CCFF00] underline decoration-[#FF4500] decoration-4">%25 Tasarrufla</span> Kargo Gönder
               </h2>
-              <p className="text-xs sm:text-sm text-slate-300 leading-relaxed">
-                Şahsi aracıyla seyahat eden sürücüler ile aynı yöne eşya göndermek isteyenleri buluşturan güvenli yol arkadaşı platformu.
+
+              <p className="text-xs sm:text-sm text-slate-300 font-grotesk leading-relaxed">
+                Şahsi aracıyla seyahat eden sürücüler ile aynı hatta koli göndermek isteyenleri buluşturan güvenceli, 4 haneli kod teyitli yol arkadaşı platformu.
               </p>
 
-              {/* Hızlı Butonlar */}
+              {/* Hızlı Aksiyon Butonları */}
               <div className="flex flex-wrap items-center gap-3 pt-2">
                 <button
                   type="button"
                   onClick={() => setActiveTab('sender')}
-                  className={`px-4 py-2.5 rounded-xl text-xs font-bold transition-all flex items-center gap-2 shadow-lg ${
+                  className={`px-5 py-3 rounded-lg text-xs font-syne font-extrabold uppercase tracking-wider transition-all flex items-center gap-2 shadow-lg active:translate-y-0.5 ${
                     activeTab === 'sender'
-                      ? 'bg-emerald-400 text-slate-950 shadow-emerald-500/20'
-                      : 'bg-slate-800 text-white hover:bg-slate-700'
+                      ? 'bg-[#CCFF00] text-black shadow-[0_4px_20px_rgba(204,255,0,0.35)]'
+                      : 'bg-[#151821] text-white hover:bg-[#1E222E] border border-white/10'
                   }`}
                 >
-                  <Package className="w-4 h-4" />
+                  <Package className="w-4 h-4 stroke-[2.5]" />
                   <span>Kargo Gönder & Ara</span>
                 </button>
 
@@ -130,38 +132,43 @@ export function App() {
                     setActiveTab('driver');
                     setIsCreateTripOpen(true);
                   }}
-                  className="px-4 py-2.5 rounded-xl bg-slate-800 hover:bg-slate-700 border border-white/10 text-white text-xs font-bold transition-all flex items-center gap-2"
+                  className="px-5 py-3 rounded-lg bg-[#FF4500] hover:bg-[#e03d00] text-black text-xs font-syne font-extrabold uppercase tracking-wider transition-all flex items-center gap-2 shadow-[0_4px_20px_rgba(255,69,0,0.35)] active:translate-y-0.5"
                 >
-                  <Plus className="w-4 h-4 text-emerald-400" />
+                  <Plus className="w-4 h-4 stroke-[3]" />
                   <span>Sürücüyüm (Rota Aç)</span>
                 </button>
 
                 <button
                   type="button"
                   onClick={() => setIsTourOpen(true)}
-                  className="text-xs text-slate-400 hover:text-emerald-400 underline font-semibold ml-2"
+                  className="font-mono text-xs text-[#CCFF00] hover:underline font-bold ml-2 flex items-center gap-1"
                 >
-                  Sistem Nasıl Çalışır? →
+                  <span>Rehberi İncele</span>
+                  <ArrowRight className="w-3.5 h-3.5" />
                 </button>
               </div>
             </div>
 
-            {/* Basit Avantaj Rozetleri */}
+            {/* Yan Taraf: Taktiksel Metrik Blokları */}
             <div className="grid grid-cols-2 gap-3 shrink-0">
-              <div className="p-4 rounded-2xl bg-slate-950/80 border border-white/5 space-y-1">
-                <div className="text-xs font-semibold text-emerald-400 flex items-center gap-1.5">
+              <div className="chamfer-card p-4 bg-[#08090C] border border-[#CCFF00]/40 space-y-1">
+                <div className="text-xs font-mono font-bold text-[#CCFF00] flex items-center gap-1.5 uppercase">
                   <TrendingDown className="w-4 h-4" />
-                  <span>%25 Daha Ucuz</span>
+                  <span>%25 İNDİRİM</span>
                 </div>
-                <div className="text-[11px] text-slate-400">Normal kargo şirketlerine göre sabit indirim</div>
+                <div className="text-[11px] text-slate-400 font-grotesk">
+                  Piyasa standart kargo şirketlerine kıyasla sabit kazanç
+                </div>
               </div>
 
-              <div className="p-4 rounded-2xl bg-slate-950/80 border border-white/5 space-y-1">
-                <div className="text-xs font-semibold text-purple-400 flex items-center gap-1.5">
+              <div className="chamfer-card p-4 bg-[#08090C] border border-purple-500/40 space-y-1">
+                <div className="text-xs font-mono font-bold text-purple-400 flex items-center gap-1.5 uppercase">
                   <ShieldCheck className="w-4 h-4" />
-                  <span>Kodlu Güvence</span>
+                  <span>KODLU GÜVENCE</span>
                 </div>
-                <div className="text-[11px] text-slate-400">Teslim edilene kadar paranız güvende</div>
+                <div className="text-[11px] text-slate-400 font-grotesk">
+                  Teslim edilene dek tutar havuzda bloke kalır
+                </div>
               </div>
             </div>
           </div>
@@ -197,7 +204,7 @@ export function App() {
             )}
 
             <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
-              {/* Sol Taraf: Seferler */}
+              {/* Sol Taraf: Seferler Listesi */}
               <div className="lg:col-span-7 space-y-4">
                 <DriverTripsList
                   trips={trips}
@@ -211,21 +218,21 @@ export function App() {
               {/* Sağ Taraf: Yol Üstü Harita Görünümü */}
               <div className="lg:col-span-5 space-y-4">
                 {selectedTrip ? (
-                  <div className="p-5 rounded-3xl bg-slate-900/80 border border-white/10 shadow-xl space-y-4">
+                  <div className="chamfer-card p-5 bg-[#0D0F14] border border-white/10 shadow-xl space-y-4">
                     <div className="flex items-center justify-between">
                       <div className="flex items-center gap-2">
-                        <span className="w-2.5 h-2.5 rounded-full bg-emerald-400 animate-pulse"></span>
-                        <h3 className="text-sm font-bold text-white uppercase tracking-wider">
-                          Güzergah & Yol Üstü Şehirleri
+                        <span className="w-2.5 h-2.5 rounded-full bg-[#FF4500] animate-pulse"></span>
+                        <h3 className="text-sm font-syne font-bold text-white uppercase tracking-wider">
+                          Güzergah & Yol Üstü Durakları
                         </h3>
                       </div>
-                      <span className="text-xs font-mono text-emerald-400 font-bold">
+                      <span className="text-xs font-mono text-[#CCFF00] font-extrabold">
                         ~{selectedTrip.distanceKm} km
                       </span>
                     </div>
 
                     {/* Harita */}
-                    <div className="h-72 w-full rounded-2xl overflow-hidden border border-white/10">
+                    <div className="h-72 w-full rounded-xl overflow-hidden border border-white/15">
                       <RouteMap
                         routeCoordinates={selectedTrip.routeCoordinates}
                         bufferPolygon={corridorResult?.bufferPolygon}
@@ -238,12 +245,12 @@ export function App() {
 
                     {/* Yol Üstü Şehirler */}
                     <div className="space-y-2">
-                      <div className="flex items-center justify-between text-xs">
-                        <span className="font-semibold text-slate-300 flex items-center gap-1.5">
-                          <Layers className="w-3.5 h-3.5 text-blue-400" />
-                          <span>Yol Üstünde Kargo Alınabilecek İller:</span>
+                      <div className="flex items-center justify-between text-xs font-mono">
+                        <span className="font-bold text-slate-300 flex items-center gap-1.5">
+                          <Compass className="w-3.5 h-3.5 text-[#00E5FF]" />
+                          <span>Yol Üstü Durakları (±30 km Koridoru):</span>
                         </span>
-                        <span className="text-[11px] text-slate-500">{selectedTrip.serviceCities.length} Şehir</span>
+                        <span className="text-[#CCFF00]">{selectedTrip.serviceCities.length} İl</span>
                       </div>
 
                       <RouteCorridorBadge
@@ -253,25 +260,26 @@ export function App() {
                       />
                     </div>
 
-                    <div className="p-3.5 rounded-2xl bg-slate-950/70 border border-white/5 flex items-center justify-between text-xs">
+                    {/* Alt İpuçları */}
+                    <div className="p-3.5 rounded-lg bg-[#07080A] border border-white/10 flex items-center justify-between text-xs font-mono">
                       <div>
-                        <span className="text-slate-400">Boş Bagaj Hacmi:</span>
-                        <div className="font-mono font-extrabold text-amber-400 text-sm">
-                          {selectedTrip.availableCapacityDesi} Desi
+                        <span className="text-slate-400">BOŞ BAGAJ:</span>
+                        <div className="font-extrabold text-[#CCFF00] text-sm">
+                          {selectedTrip.availableCapacityDesi} DESİ
                         </div>
                       </div>
                       <div className="text-right">
-                        <span className="text-slate-400">Tahmini Kalkış:</span>
-                        <div className="text-slate-200 font-medium">
+                        <span className="text-slate-400">KALKIŞ VAKTİ:</span>
+                        <div className="text-white font-bold">
                           {new Date(selectedTrip.departureTime).toLocaleTimeString('tr-TR', { hour: '2-digit', minute: '2-digit' })}
                         </div>
                       </div>
                     </div>
                   </div>
                 ) : (
-                  <div className="p-8 rounded-3xl bg-slate-900/60 border border-white/10 text-center">
+                  <div className="chamfer-card p-8 bg-[#0D0F14] border border-white/10 text-center">
                     <Car className="w-8 h-8 text-slate-600 mx-auto mb-2" />
-                    <p className="text-xs text-slate-400">Haritada incelemek için sol taraftan bir sefer seçin.</p>
+                    <p className="text-xs text-slate-400 font-grotesk">Haritada incelemek için sol taraftan bir sefer seçin.</p>
                   </div>
                 )}
               </div>
@@ -297,25 +305,27 @@ export function App() {
         )}
       </main>
 
-      {/* Alt Bilgi */}
-      <footer className="mt-12 border-t border-white/5 bg-[#060910] py-8 text-xs text-slate-500">
+      {/* Alt Bilgi: Dispatch Terminal Footer */}
+      <footer className="mt-12 border-t border-white/10 bg-[#050608] py-8 text-xs text-slate-400 font-mono">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col sm:flex-row items-center justify-between gap-4">
           <div className="flex items-center gap-2">
-            <span className="font-bold text-white tracking-wider">EMANET</span>
-            <span>• Şehirler Arası Güvenli Bagaj & Kargo Paylaşım Platformu</span>
+            <span className="font-syne font-extrabold text-white tracking-widest text-sm text-[#FF4500]">
+              EMANET
+            </span>
+            <span>• OTOYOL P2P BAGAJ & KARGO DAĞITIM SİSTEMİ</span>
           </div>
 
           <div className="flex items-center gap-4 text-slate-400">
-            <span>Kodlu Güvence</span>
+            <span>[KODLU GÜVENCE]</span>
             <span>•</span>
-            <span>%25 Tasarruf</span>
+            <span className="text-[#CCFF00]">[%25 TASARRUF]</span>
             <span>•</span>
-            <span>Yol Üstü Eşleşme</span>
+            <span>[±30KM KORİDOR]</span>
             <span>•</span>
             <button
               type="button"
               onClick={() => setIsTourOpen(true)}
-              className="text-emerald-400 hover:underline font-semibold"
+              className="text-[#FF4500] hover:underline font-bold"
             >
               Nasıl Çalışır?
             </button>

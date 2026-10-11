@@ -1,5 +1,5 @@
 import React from 'react';
-import { Navigation, MapPin } from 'lucide-react';
+import { getCityByName } from '../../lib/turkishCities';
 
 interface RouteCorridorBadgeProps {
   cities: string[];
@@ -15,37 +15,38 @@ export const RouteCorridorBadge: React.FC<RouteCorridorBadgeProps> = ({
   if (!cities || cities.length === 0) return null;
 
   return (
-    <div className="flex flex-wrap items-center gap-1.5 py-1">
+    <div className="flex flex-wrap items-center gap-1.5 py-1 font-mono text-xs">
       {cities.map((city, idx) => {
         const isOrigin = highlightOrigin && city.toLowerCase() === highlightOrigin.toLowerCase();
         const isDest = highlightDest && city.toLowerCase() === highlightDest.toLowerCase();
         const isFirst = idx === 0;
         const isLast = idx === cities.length - 1;
 
-        let badgeStyle = 'bg-slate-800/80 text-slate-300 border-white/5';
+        const cityObj = getCityByName(city);
+        const plateStr = cityObj ? String(cityObj.plate).padStart(2, '0') : '--';
+
+        let badgeStyle = 'bg-[#151720] text-[#9EA4B8] border-[#252836]';
+        let prefixTag = plateStr;
+
         if (isOrigin || isFirst) {
-          badgeStyle = 'bg-emerald-950/80 text-emerald-300 border-emerald-500/40 font-semibold';
+          badgeStyle = 'bg-[#FF4500] text-black border-[#FF4500] font-black shadow-md shadow-[#FF4500]/20';
+          prefixTag = 'ORİJİN·' + plateStr;
         } else if (isDest || isLast) {
-          badgeStyle = 'bg-purple-950/80 text-purple-300 border-purple-500/40 font-semibold';
+          badgeStyle = 'bg-[#CCFF00] text-black border-[#CCFF00] font-black shadow-md shadow-[#CCFF00]/20';
+          prefixTag = 'VARIŞ·' + plateStr;
         }
 
         return (
           <React.Fragment key={city}>
             <span
-              className={`inline-flex items-center gap-1 px-2.5 py-1 rounded-lg text-xs border shadow-sm transition-all ${badgeStyle}`}
+              className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md text-[11px] border transition-all ${badgeStyle}`}
             >
-              {isOrigin || isFirst ? (
-                <span className="w-1.5 h-1.5 rounded-full bg-emerald-400"></span>
-              ) : isDest || isLast ? (
-                <span className="w-1.5 h-1.5 rounded-full bg-purple-400"></span>
-              ) : (
-                <MapPin className="w-2.5 h-2.5 text-slate-400" />
-              )}
-              <span>{city}</span>
+              <span className="opacity-75 text-[10px] tracking-tighter">[{prefixTag}]</span>
+              <span className="tracking-wide uppercase font-bold">{city}</span>
             </span>
 
             {idx < cities.length - 1 && (
-              <span className="text-slate-600 text-xs font-mono select-none">→</span>
+              <span className="text-[#4E5467] text-[11px] select-none">⇢</span>
             )}
           </React.Fragment>
         );

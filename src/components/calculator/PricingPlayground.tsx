@@ -8,7 +8,8 @@ import {
   Building2, 
   ArrowRight,
   Layers,
-  MapPin
+  MapPin,
+  CheckCircle2
 } from 'lucide-react';
 import { calculateEmanetPricing } from '../../lib/pricing';
 import { TURKISH_CITIES, getCityByName } from '../../lib/turkishCities';
@@ -33,42 +34,51 @@ export const PricingPlayground: React.FC = () => {
   const corridor = calculateCorridorCities(testRoute.coordinates, testOrigin, testDest, 30);
 
   const presets = [
-    { name: 'İstanbul - Kocaeli (Kısa Hat)', km: 110, desi: 4 },
-    { name: 'İstanbul - Ankara (TEM Otoyolu)', km: 450, desi: 10 },
-    { name: 'İstanbul - İzmir (O-5 Otoyolu)', km: 480, desi: 15 },
-    { name: 'Ankara - Antalya (Güney Hattı)', km: 490, desi: 25 },
+    { name: 'İstanbul - Kocaeli (Kısa)', km: 110, desi: 4 },
+    { name: 'İstanbul - Ankara (TEM)', km: 450, desi: 10 },
+    { name: 'İstanbul - İzmir (O-5)', km: 480, desi: 15 },
+    { name: 'Ankara - Antalya (Güney)', km: 490, desi: 25 },
     { name: 'İstanbul - Trabzon (Karadeniz)', km: 1060, desi: 20 },
   ];
 
   return (
     <div className="space-y-6">
-      {/* Başlık */}
-      <div className="pb-2 border-b border-white/5">
-        <h2 className="text-lg font-bold text-white tracking-tight flex items-center gap-2">
-          <Calculator className="w-5 h-5 text-emerald-400" />
-          <span>Fiyat & Yol Üstü Güzergah Hesaplayıcı</span>
-        </h2>
-        <p className="text-xs text-slate-400">
-          Kargo boyutu ve mesafeye göre net indirimli fiyatı, sürücü kazancını ve yol üstü durakları simüle edin
-        </p>
+      {/* Başlık Çubuğu */}
+      <div className="p-4 rounded-xl bg-[#0D0F14] border border-white/10 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+        <div>
+          <div className="flex items-center gap-2">
+            <span className="font-mono text-[10px] text-[#CCFF00] tracking-widest uppercase bg-[#CCFF00]/10 px-2 py-0.5 border border-[#CCFF00]/30 rounded">
+              TARİFE & KORİDOR SİMÜLATÖRÜ
+            </span>
+            <span className="font-mono text-xs text-white/50">BENCHMARK LAB</span>
+          </div>
+          <h2 className="text-xl font-syne font-extrabold text-white tracking-tight mt-1 flex items-center gap-2">
+            <span>Fiyatlama & Yol Üstü Güzergah Test Masası</span>
+          </h2>
+          <p className="text-xs text-slate-400 mt-0.5 font-grotesk">
+            Hacim ve mesafeye göre piyasa farkını, %25 tasarrufu ve 30 km yol koridorunu canlı test edin
+          </p>
+        </div>
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
-        {/* Sol Taraf: Fiyatlandırma Formülü ve Kaydırıcılar */}
+        {/* Sol Taraf: Dinamik Fiyatlandırma Formülü ve Kaydırıcılar */}
         <div className="lg:col-span-6 space-y-6">
-          <div className="p-6 rounded-3xl bg-slate-900/80 border border-white/10 shadow-xl space-y-5">
+          <div className="chamfer-card p-6 bg-[#0D0F14] border border-white/10 shadow-xl space-y-5">
             <div className="flex items-center justify-between">
-              <span className="text-xs font-bold text-slate-300 uppercase tracking-wider">
-                1. Dinamik Fiyatlandırma Parametreleri
+              <span className="font-mono text-xs font-bold text-slate-300 uppercase tracking-wider">
+                01. FİYAT MATRİS PARAMETRELERİ
               </span>
-              <span className="px-2.5 py-0.5 rounded-full bg-emerald-500/10 text-emerald-300 border border-emerald-500/30 text-xs font-bold">
-                Net %25 Tasarruf Modeli
+              <span className="px-2.5 py-0.5 rounded bg-[#CCFF00]/10 text-[#CCFF00] border border-[#CCFF00]/30 font-mono text-xs font-bold">
+                NET %25 İNDİRİM
               </span>
             </div>
 
             {/* Hızlı Şablonlar */}
             <div className="space-y-1.5">
-              <span className="text-[11px] font-semibold text-slate-400">Hazır Rota Şablonları:</span>
+              <span className="text-[11px] font-mono uppercase tracking-wider text-slate-400">
+                Hazır Rota Şablonları:
+              </span>
               <div className="flex flex-wrap gap-1.5">
                 {presets.map(p => (
                   <button
@@ -78,7 +88,7 @@ export const PricingPlayground: React.FC = () => {
                       setDistanceKm(p.km);
                       setDesi(p.desi);
                     }}
-                    className="px-2.5 py-1 rounded-xl bg-slate-950 hover:bg-slate-800 border border-white/5 text-[11px] text-slate-300 hover:text-white transition-all"
+                    className="px-3 py-1.5 rounded bg-[#07080A] hover:bg-white/10 border border-white/10 text-xs font-mono text-slate-300 hover:text-white transition-all active:scale-95"
                   >
                     {p.name}
                   </button>
@@ -87,10 +97,10 @@ export const PricingPlayground: React.FC = () => {
             </div>
 
             {/* Mesafe Kaydırıcısı */}
-            <div className="space-y-2">
+            <div className="p-3.5 rounded-lg bg-[#07080A] border border-white/10 space-y-2">
               <div className="flex justify-between items-center text-xs">
-                <span className="font-semibold text-slate-300">Taşıma Mesafesi (km)</span>
-                <span className="font-mono font-extrabold text-emerald-400 text-sm">{distanceKm} km</span>
+                <span className="font-mono text-[11px] uppercase text-slate-300">Taşıma Mesafesi</span>
+                <span className="font-mono font-extrabold text-[#CCFF00] text-base">{distanceKm} KM</span>
               </div>
               <input
                 type="range"
@@ -99,9 +109,9 @@ export const PricingPlayground: React.FC = () => {
                 step="10"
                 value={distanceKm}
                 onChange={e => setDistanceKm(Number(e.target.value))}
-                className="w-full accent-emerald-500 cursor-pointer"
+                className="w-full accent-[#FF4500] cursor-pointer"
               />
-              <div className="flex justify-between text-[10px] text-slate-500">
+              <div className="flex justify-between text-[10px] font-mono text-slate-500">
                 <span>20 km</span>
                 <span>500 km</span>
                 <span>1000 km</span>
@@ -110,10 +120,10 @@ export const PricingPlayground: React.FC = () => {
             </div>
 
             {/* Desi Kaydırıcısı */}
-            <div className="space-y-2">
+            <div className="p-3.5 rounded-lg bg-[#07080A] border border-white/10 space-y-2">
               <div className="flex justify-between items-center text-xs">
-                <span className="font-semibold text-slate-300">Paket Hacmi (Desi)</span>
-                <span className="font-mono font-extrabold text-amber-400 text-sm">{desi} Desi</span>
+                <span className="font-mono text-[11px] uppercase text-slate-300">Paket Hacmi (Desi)</span>
+                <span className="font-mono font-extrabold text-[#FF4500] text-base">{desi} DESİ</span>
               </div>
               <input
                 type="range"
@@ -121,60 +131,60 @@ export const PricingPlayground: React.FC = () => {
                 max="60"
                 value={desi}
                 onChange={e => setDesi(Number(e.target.value))}
-                className="w-full accent-amber-500 cursor-pointer"
+                className="w-full accent-[#CCFF00] cursor-pointer"
               />
-              <div className="flex justify-between text-[10px] text-slate-500">
-                <span>1 Desi (Zarf)</span>
-                <span>10 Desi (Orta Koli)</span>
+              <div className="flex justify-between text-[10px] font-mono text-slate-500">
+                <span>1 Desi (Evrak)</span>
+                <span>10 Desi (Koli)</span>
                 <span>30 Desi (Valiz)</span>
                 <span>60 Desi</span>
               </div>
             </div>
 
             {/* Formül Çıktıları */}
-            <div className="p-4 rounded-2xl bg-slate-950/80 border border-white/5 space-y-3">
-              <div className="text-xs font-semibold text-slate-400 uppercase tracking-wider">
-                Hesaplama Dökümü (Adım Adım):
+            <div className="p-4 rounded-xl bg-[#07080A] border border-white/10 space-y-3 font-mono">
+              <div className="text-[11px] font-bold text-slate-400 uppercase tracking-wider">
+                HESAPLAMA ADIMLARI & FORMÜL:
               </div>
 
               <div className="space-y-2 text-xs">
-                <div className="flex justify-between text-slate-300">
+                <div className="flex justify-between text-slate-400">
                   <span>1. Baz Maliyet (80 + {distanceKm}*0.18 + {desi}*12):</span>
-                  <span className="font-mono text-slate-200">{pricing.baseCost} TL</span>
+                  <span className="text-white font-bold">{pricing.baseCost} TL</span>
                 </div>
 
                 <div className="flex justify-between text-slate-400">
-                  <span>2. Piyasa Standart Kargo Fiyatı (+%35):</span>
-                  <span className="font-mono line-through text-slate-400 font-bold">{pricing.marketPrice} TL</span>
+                  <span>2. Gerçek Standart Kargo Piyasa Fiyatı (+%35):</span>
+                  <span className="line-through text-slate-500 font-bold">{pricing.marketPrice} TL</span>
                 </div>
 
-                <div className="flex justify-between text-emerald-400 font-bold text-sm bg-emerald-950/40 p-2 rounded-xl">
-                  <span>3. Emanet Fiyatı (%25 İndirimli):</span>
-                  <span className="font-mono text-base">{pricing.emanetPrice} TL</span>
+                <div className="flex justify-between text-[#CCFF00] bg-[#18220A] p-2.5 rounded-lg border border-[#CCFF00]/40">
+                  <span className="font-bold">3. Emanet Fiyatı (%25 İndirimli):</span>
+                  <span className="font-syne font-extrabold text-lg">{pricing.emanetPrice} TL</span>
                 </div>
 
-                <div className="flex justify-between text-slate-300 pt-1 border-t border-white/5">
-                  <span className="flex items-center gap-1.5">
-                    <Wallet className="w-3.5 h-3.5 text-emerald-400" />
+                <div className="flex justify-between text-slate-300 pt-1 border-t border-white/10">
+                  <span className="flex items-center gap-1.5 font-grotesk">
+                    <Wallet className="w-3.5 h-3.5 text-[#CCFF00]" />
                     <span>Sürücü Net Hakedişi (%85):</span>
                   </span>
-                  <strong className="font-mono text-emerald-400">{pricing.driverPayout} TL</strong>
+                  <strong className="text-[#CCFF00] text-sm">{pricing.driverPayout} TL</strong>
                 </div>
 
                 <div className="flex justify-between text-slate-400">
-                  <span className="flex items-center gap-1.5">
+                  <span className="flex items-center gap-1.5 font-grotesk">
                     <Building2 className="w-3.5 h-3.5 text-blue-400" />
                     <span>Platform Hizmet Bedeli (%15):</span>
                   </span>
-                  <span className="font-mono text-slate-300">{pricing.platformFee} TL</span>
+                  <span className="text-slate-300 font-bold">{pricing.platformFee} TL</span>
                 </div>
 
-                <div className="flex justify-between text-emerald-300 pt-1 border-t border-white/5">
-                  <span className="flex items-center gap-1.5">
+                <div className="flex justify-between text-[#FF4500] pt-1 border-t border-white/10">
+                  <span className="flex items-center gap-1.5 font-grotesk font-bold">
                     <Sparkles className="w-3.5 h-3.5" />
-                    <span>Kullanıcının Net Kazancı:</span>
+                    <span>Kullanıcının Net Tasarrufu:</span>
                   </span>
-                  <strong className="font-mono">{pricing.userSavings} TL Tasarruf</strong>
+                  <strong className="text-sm">{pricing.userSavings} TL Tasarruf</strong>
                 </div>
               </div>
             </div>
@@ -183,19 +193,19 @@ export const PricingPlayground: React.FC = () => {
 
         {/* Sağ Taraf: GIS 30 KM Koridor Testi */}
         <div className="lg:col-span-6 space-y-6">
-          <div className="p-6 rounded-3xl bg-slate-900/80 border border-white/10 shadow-xl space-y-4">
+          <div className="chamfer-card p-6 bg-[#0D0F14] border border-white/10 shadow-xl space-y-4">
             <div className="flex items-center justify-between">
-              <span className="text-xs font-bold text-slate-300 uppercase tracking-wider">
-                2. Yol Üstü Güzergah Hesaplayıcı
+              <span className="font-mono text-xs font-bold text-slate-300 uppercase tracking-wider">
+                02. YOL ÜSTÜ DURAK KORİDORU
               </span>
-              <span className="px-2 py-0.5 rounded-full bg-blue-500/10 text-blue-300 border border-blue-500/30 text-xs font-bold">
-                30 km Yol Çevresi
+              <span className="px-2 py-0.5 rounded bg-[#00E5FF]/10 text-[#00E5FF] border border-[#00E5FF]/30 font-mono text-xs font-bold">
+                ±30 KM TAMPON BÖLGE
               </span>
             </div>
 
             <div className="grid grid-cols-2 gap-3">
               <div className="space-y-1">
-                <label className="text-[11px] font-semibold text-slate-400">Çıkış İli</label>
+                <label className="text-[11px] font-mono uppercase tracking-wider text-slate-400">Çıkış İli</label>
                 <select
                   value={testOrigin}
                   onChange={e => {
@@ -207,18 +217,18 @@ export const PricingPlayground: React.FC = () => {
                       setDistanceKm(r.distanceKm);
                     }
                   }}
-                  className="w-full px-3 py-2 rounded-xl bg-slate-950 border border-white/10 text-white text-xs"
+                  className="w-full px-3 py-2 rounded-lg bg-[#07080A] border border-white/15 text-white text-xs font-mono font-bold"
                 >
                   {TURKISH_CITIES.map(c => (
                     <option key={c.plate} value={c.name}>
-                      {c.name}
+                      {c.plate} - {c.name}
                     </option>
                   ))}
                 </select>
               </div>
 
               <div className="space-y-1">
-                <label className="text-[11px] font-semibold text-slate-400">Varış İli</label>
+                <label className="text-[11px] font-mono uppercase tracking-wider text-slate-400">Varış İli</label>
                 <select
                   value={testDest}
                   onChange={e => {
@@ -230,11 +240,11 @@ export const PricingPlayground: React.FC = () => {
                       setDistanceKm(r.distanceKm);
                     }
                   }}
-                  className="w-full px-3 py-2 rounded-xl bg-slate-950 border border-white/10 text-white text-xs"
+                  className="w-full px-3 py-2 rounded-lg bg-[#07080A] border border-white/15 text-white text-xs font-mono font-bold"
                 >
                   {TURKISH_CITIES.map(c => (
                     <option key={c.plate} value={c.name}>
-                      {c.name}
+                      {c.plate} - {c.name}
                     </option>
                   ))}
                 </select>
@@ -242,7 +252,7 @@ export const PricingPlayground: React.FC = () => {
             </div>
 
             {/* Canlı Mini Harita */}
-            <div className="h-48 rounded-2xl overflow-hidden border border-white/10">
+            <div className="h-48 rounded-xl overflow-hidden border border-white/15">
               <RouteMap
                 routeCoordinates={testRoute.coordinates}
                 bufferPolygon={corridor.bufferPolygon}
@@ -256,10 +266,10 @@ export const PricingPlayground: React.FC = () => {
             {/* Sıralı Koridor Listesi */}
             <div className="space-y-2">
               <div className="flex items-center justify-between text-xs">
-                <span className="font-semibold text-slate-300">
-                  Rota Boyunca Uğranabilecek Şehirler ({corridor.serviceCities.length} İl):
+                <span className="font-mono text-[11px] uppercase text-slate-300">
+                  Rota Üstü Durak İlleri ({corridor.serviceCities.length} İl):
                 </span>
-                <span className="text-emerald-400 font-mono font-bold">~{corridor.totalDistanceKm} km</span>
+                <span className="text-[#CCFF00] font-mono font-extrabold">~{corridor.totalDistanceKm} km</span>
               </div>
 
               <RouteCorridorBadge
@@ -269,8 +279,8 @@ export const PricingPlayground: React.FC = () => {
               />
             </div>
 
-            <div className="p-3 rounded-2xl bg-slate-950/80 border border-white/5 text-[11px] text-slate-400">
-              Kural: Göndericinin arama yaptığı çıkış ve varış şehirleri bu listede bulunmalı ve çıkış şehri varış şehrinden önce gelmelidir.
+            <div className="p-3 rounded-lg bg-[#07080A] border border-white/10 text-xs text-slate-400 font-grotesk">
+              Kural: Göndericinin arama yaptığı çıkış ve varış şehirleri bu sıralı koridor listesinde yer almalı ve çıkış şehri varış şehrinden önce gelmelidir.
             </div>
           </div>
         </div>

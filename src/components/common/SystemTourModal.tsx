@@ -35,85 +35,85 @@ export const SystemTourModal: React.FC<SystemTourModalProps> = ({ isOpen, onClos
     {
       id: 'concept',
       title: 'Emanet Nedir? Nasıl Çalışır?',
-      subtitle: 'Şehirler arası boş bagaj hacmini güvenle paylaşın',
+      subtitle: 'Şehirler arası şahsi araçların boş bagajını güvenle paylaşın',
       icon: Car,
-      badge: '1. Sistem Mantığı',
+      badge: '01. SİSTEM MANTIĞI',
       content: (
         <div className="space-y-4">
-          <p className="text-slate-300 text-sm leading-relaxed">
-            Emanet; şahsi aracıyla şehirler arası seyahat eden sürücüler ile aynı yöne eşya veya paket göndermek isteyen kişileri doğrudan buluşturan modern bir paylaşım platformudur.
+          <p className="text-slate-300 text-sm leading-relaxed font-grotesk">
+            Emanet; şahsi aracıyla şehirler arası seyahat eden sürücüler ile aynı istikamete paket göndermek isteyen kişileri doğrudan buluşturan modern bir yol arkadaşı platformudur.
           </p>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-1">
-            <div className="p-4 rounded-2xl bg-slate-900/90 border border-white/10 space-y-2">
-              <div className="flex items-center gap-2 text-xs font-bold text-emerald-400 uppercase">
+            <div className="p-4 rounded-xl bg-[#07080A] border border-white/10 space-y-2">
+              <div className="flex items-center gap-2 font-mono text-xs font-bold text-[#FF4500] uppercase">
                 <Car className="w-4 h-4" />
                 <span>Sürücüler İçin</span>
               </div>
-              <p className="text-xs text-slate-300 leading-relaxed">
-                Zaten gideceğiniz yolda bagajınızdaki boş yeri değerlendirin. Yol üstünden kargo alıp bırakarak <strong>akaryakıt ve otoyol masraflarınızı çıkarın</strong>.
+              <p className="text-xs text-slate-300 font-grotesk leading-relaxed">
+                Zaten gideceğiniz güzergahta bagajınızdaki boş yeri değerlendirin. Yol üstünden kargo alıp bırakarak <strong>yakıt ve gişe masraflarınızı karşılayın</strong>.
               </p>
             </div>
 
-            <div className="p-4 rounded-2xl bg-slate-900/90 border border-white/10 space-y-2">
-              <div className="flex items-center gap-2 text-xs font-bold text-blue-400 uppercase">
+            <div className="p-4 rounded-xl bg-[#07080A] border border-white/10 space-y-2">
+              <div className="flex items-center gap-2 font-mono text-xs font-bold text-[#00E5FF] uppercase">
                 <PackageCheck className="w-4 h-4" />
-                <span>Kargo Gönderenler İçin</span>
+                <span>Göndericiler İçin</span>
               </div>
-              <p className="text-xs text-slate-300 leading-relaxed">
-                Kargonuzu şubelerde günlerce bekletmeden, doğrudan yoldaki güvenilir bir sürücüyle <strong>aynı gün içinde ve %25 daha ucuza</strong> gönderin.
+              <p className="text-xs text-slate-300 font-grotesk leading-relaxed">
+                Kargonuzu şubelerde günlerce bekletmeden, doğrudan yoldaki doğrulanmış bir sürücüyle <strong>aynı gün içinde ve net %25 daha ucuza</strong> ulaştırın.
               </p>
             </div>
           </div>
 
-          <div className="p-3.5 rounded-xl bg-slate-950/70 border border-white/5 flex items-center gap-3 text-xs text-slate-300">
-            <Sparkles className="w-4 h-4 text-emerald-400 shrink-0" />
-            <span>Hem sürücü kazanır, hem kargo sahibi tasarruf eder, hem de kargo hızla hedefine varır.</span>
+          <div className="p-3.5 rounded-lg bg-[#141208] border border-[#FF4500]/30 flex items-center gap-3 text-xs text-slate-300 font-grotesk">
+            <Sparkles className="w-4 h-4 text-[#FF4500] shrink-0" />
+            <span>Hem sürücü kazanır, hem kargo sahibi tasarruf eder, hem de gönderiniz doğrudan varış noktasına teslim edilir.</span>
           </div>
         </div>
       )
     },
     {
       id: 'pricing',
-      title: 'Net %25 Daha Ucuz Fiyat Garantisi',
-      subtitle: 'Standart kargo şirketlerinin fiyatına göre her zaman avantajlı',
+      title: 'Net %25 Daha Uygun Fiyat Garantisi',
+      subtitle: 'Piyasa kargo firmalarının fiyatına göre her zaman avantajlı ve şeffaf',
       icon: TrendingDown,
-      badge: '2. Fiyat Avantajı',
+      badge: '02. FİYAT DİNAMİĞİ',
       content: (
         <div className="space-y-4">
-          <p className="text-slate-300 text-sm leading-relaxed">
-            Kargonuzun hacmi (desi) ve mesafesine göre sistem adil ve şeffaf bir fiyat belirler.
+          <p className="text-slate-300 text-sm leading-relaxed font-grotesk">
+            Kargonuzun hacmi (desi) ve mesafesine göre sistem adil ve şeffaf bir tarife hesaplar.
           </p>
 
-          <div className="p-4 rounded-2xl bg-gradient-to-r from-emerald-950/50 via-slate-900 to-slate-900 border border-emerald-500/30 space-y-3">
-            <div className="flex items-center justify-between text-xs font-semibold text-emerald-300">
-              <span>Örnek Kargo Karşılaştırması (İstanbul → Ankara, 6 Desi):</span>
-              <span className="px-2 py-0.5 rounded-full bg-emerald-500/20 text-emerald-300 font-bold">%25 Tasarruf</span>
+          <div className="p-4 rounded-xl bg-[#07080A] border border-[#CCFF00]/40 space-y-3 font-mono">
+            <div className="flex items-center justify-between text-xs font-bold text-[#CCFF00]">
+              <span>ÖRNEK: İSTANBUL ➔ ANKARA (6 DESİ KOLİ)</span>
+              <span className="px-2 py-0.5 rounded bg-[#CCFF00]/15 text-[#CCFF00] font-bold">%25 TASARRUF</span>
             </div>
 
-            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pt-2 border-t border-white/5">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pt-2 border-t border-white/10">
               <div>
-                <span className="text-xs text-slate-400">Normal Kargo Firmaları:</span>
-                <div className="text-base text-slate-400 line-through font-mono font-semibold">440 TL</div>
+                <span className="text-[11px] text-slate-400 font-grotesk">Standart Kargo Şirketleri:</span>
+                <div className="text-base text-slate-500 line-through font-bold">440 TL</div>
               </div>
 
               <div className="text-right">
-                <span className="text-xs text-emerald-400 font-semibold">Emanet Fiyatı:</span>
-                <div className="text-2xl font-extrabold text-white font-mono">
-                  330 TL <span className="text-xs text-emerald-400 font-bold">(110 TL Cebinizde!)</span>
+                <span className="text-[11px] text-[#CCFF00] font-grotesk font-bold">Emanet Fiyatı:</span>
+                <div className="text-2xl font-syne font-extrabold text-white">
+                  330 TL <span className="text-xs text-[#CCFF00] font-mono font-bold">(110 TL Cepte!)</span>
                 </div>
               </div>
             </div>
           </div>
 
           <div className="grid grid-cols-2 gap-3 text-xs">
-            <div className="p-3 rounded-xl bg-slate-900/80 border border-white/5 space-y-1">
-              <span className="text-slate-400 font-semibold">%85 Sürücüye Ödenir</span>
-              <p className="text-[11px] text-slate-300">Ödenen tutarın büyük bölümü doğrudan sürücünün net hakedişidir.</p>
+            <div className="p-3 rounded-lg bg-[#07080A] border border-white/10 space-y-1">
+              <span className="font-mono text-[#CCFF00] font-bold">%85 Sürücü Kazancı</span>
+              <p className="text-[11px] text-slate-400 font-grotesk">Ödemenin büyük kısmı doğrudan sürücünün net hakedişidir.</p>
             </div>
-            <div className="p-3 rounded-xl bg-slate-900/80 border border-white/5 space-y-1">
-              <span className="text-slate-400 font-semibold">%15 Hizmet & Güvence</span>
-              <p className="text-[11px] text-slate-300">Platformun kodlu güvenlik altyapısı ve destek masrafları için ayrılır.</p>
+            <div className="p-3 rounded-lg bg-[#07080A] border border-white/10 space-y-1">
+              <span className="font-mono text-blue-400 font-bold">%15 Hizmet & Sigorta</span>
+              <p className="text-[11px] text-slate-400 font-grotesk">Kodlu güvenlik altyapısı ve destek masrafları için ayrılır.</p>
             </div>
           </div>
         </div>
@@ -122,40 +122,42 @@ export const SystemTourModal: React.FC<SystemTourModalProps> = ({ isOpen, onClos
     {
       id: 'corridor',
       title: 'Yol Üstü Şehirlerden Kargo Alma',
-      subtitle: 'Sürücü yolundan sapmadan yolunun üstündeki illere de uğrayabilir',
+      subtitle: 'Sürücü ana yoldan sapmadan ±30 km mesafedeki illerden de kargo alabilir',
       icon: MapPin,
-      badge: '3. Yol Üstü Duraklar',
+      badge: '03. YOL ÜSTÜ DURAKLAR',
       content: (
         <div className="space-y-4">
-          <p className="text-slate-300 text-sm leading-relaxed">
-            Sürücü seyahat ederken ana yolunun en fazla 30 kilometre sağında ve solunda kalan tüm şehir merkezleri otomatik olarak yol üstü durağı sayılır.
+          <p className="text-slate-300 text-sm leading-relaxed font-grotesk">
+            Sürücü seyahat ederken ana yolunun en fazla 30 kilometre çevresinde kalan tüm şehir merkezleri otomatik olarak yol üstü durağı sayılır.
           </p>
 
-          <div className="p-4 rounded-2xl bg-slate-900/90 border border-white/10 space-y-3">
-            <div className="text-xs font-bold text-white">Örnek Yolculuk: İstanbul'dan Ankara'ya Giden Bir Sürücü</div>
+          <div className="p-4 rounded-xl bg-[#07080A] border border-white/10 space-y-3">
+            <div className="text-xs font-syne font-bold text-white uppercase tracking-wider">
+              Örnek: İstanbul'dan Ankara'ya Giden Sürücünün Koridoru
+            </div>
             
-            <div className="flex flex-wrap items-center gap-1.5 p-2.5 rounded-xl bg-slate-950/80 text-xs text-slate-300">
-              <span className="px-2 py-0.5 rounded bg-emerald-500/20 text-emerald-400 font-bold">İstanbul (Kalkış)</span>
-              <span>→</span>
-              <span className="text-slate-200">Kocaeli</span>
-              <span>→</span>
-              <span className="text-slate-200">Sakarya</span>
-              <span>→</span>
-              <span className="text-slate-200">Düzce</span>
-              <span>→</span>
-              <span className="text-slate-200">Bolu</span>
-              <span>→</span>
-              <span className="px-2 py-0.5 rounded bg-purple-500/20 text-purple-400 font-bold">Ankara (Varış)</span>
+            <div className="flex flex-wrap items-center gap-1.5 p-2.5 rounded-lg bg-[#0E1015] font-mono text-xs text-slate-300">
+              <span className="px-2 py-0.5 rounded bg-[#CCFF00]/15 text-[#CCFF00] font-bold">34·İST (Kalkış)</span>
+              <span>➔</span>
+              <span className="text-slate-200">41·KOC</span>
+              <span>➔</span>
+              <span className="text-slate-200">54·SAK</span>
+              <span>➔</span>
+              <span className="text-slate-200">81·DÜZ</span>
+              <span>➔</span>
+              <span className="text-slate-200">14·BOL</span>
+              <span>➔</span>
+              <span className="px-2 py-0.5 rounded bg-[#FF4500]/15 text-[#FF4500] font-bold">06·ANK (Varış)</span>
             </div>
 
-            <p className="text-xs text-slate-400 leading-normal">
-              Böylece Sakarya'dan Bolu'ya veya Kocaeli'den Ankara'ya kargo göndermek isteyen biri, aynı otoyoldan geçen sürücüyle kolayca eşleşebilir.
+            <p className="text-xs text-slate-400 font-grotesk leading-normal">
+              Böylece Sakarya'dan Bolu'ya veya Kocaeli'den Ankara'ya kargo göndermek isteyen biri, aynı otoyoldan geçen sürücüyle zahmetsizce eşleşir.
             </p>
           </div>
 
-          <div className="p-3 rounded-xl bg-amber-950/30 border border-amber-500/20 text-xs text-amber-200 flex items-center gap-2">
-            <CheckCircle2 className="w-4 h-4 text-amber-400 shrink-0" />
-            <span>Sistem ters yöndeki (örneğin Ankara'dan İstanbul'a giden) araçları eşleştirmeyerek kargonun doğru yöne gitmesini güvenceye alır.</span>
+          <div className="p-3 rounded-lg bg-[#141208] border border-[#FF4500]/30 text-xs text-[#FF4500] flex items-center gap-2 font-mono">
+            <CheckCircle2 className="w-4 h-4 shrink-0" />
+            <span>Sistem ters yöndeki araçları eşleştirmeyerek kargonun daima doğru yöne gitmesini güvenceye alır.</span>
           </div>
         </div>
       )
@@ -165,38 +167,38 @@ export const SystemTourModal: React.FC<SystemTourModalProps> = ({ isOpen, onClos
       title: '4 Haneli Güvenlik Kodları ile Sıfır Risk',
       subtitle: 'Kargonuz sağlam teslim edilene kadar ödeme sürücüye geçmez',
       icon: KeyRound,
-      badge: '4. Güvenli Teslimat',
+      badge: '04. GÜVENLİ ESCROW',
       content: (
         <div className="space-y-4">
-          <p className="text-slate-300 text-sm leading-relaxed">
-            Paranız teslimat bitene kadar sistem güvencesinde bekletilir. Süreç iki basit adımla işler:
+          <p className="text-slate-300 text-sm leading-relaxed font-grotesk">
+            Ödemeniz teslimat bitene kadar sistem güvencesinde (escrow) bekletilir. Süreç iki basit adımla işler:
           </p>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-            <div className="p-3.5 rounded-2xl bg-purple-950/30 border border-purple-500/30 space-y-2">
-              <div className="flex items-center gap-2 text-xs font-bold text-purple-300">
-                <span className="w-5 h-5 rounded-full bg-purple-500/20 flex items-center justify-center text-[11px]">1</span>
-                <span>Teslim Alma Kodu (Pickup OTP)</span>
+            <div className="p-3.5 rounded-xl bg-[#140E1B] border border-purple-500/40 space-y-2">
+              <div className="flex items-center gap-2 font-mono text-xs font-bold text-purple-300">
+                <span className="w-5 h-5 rounded bg-purple-500/20 flex items-center justify-center text-[10px]">1</span>
+                <span>TESLİM ALMA KODU (PICKUP OTP)</span>
               </div>
-              <p className="text-xs text-slate-300 leading-relaxed">
-                Sürücü kapınıza gelip kargoyu teslim alırken, ekranınızda beliren <strong>4 haneli kodu</strong> sürücüye söylersiniz. Sürücü ambalaj fotoğrafıyla onaylar ve kargo yola çıkar.
+              <p className="text-xs text-slate-300 font-grotesk leading-relaxed">
+                Sürücü kapınızdan paketi alırken, ekranınızdaki <strong>4 haneli kodu</strong> sürücüye verirsiniz. Sürücü ambalaj fotoğrafıyla onaylar ve kargo yola çıkar.
               </p>
             </div>
 
-            <div className="p-3.5 rounded-2xl bg-emerald-950/30 border border-emerald-500/30 space-y-2">
-              <div className="flex items-center gap-2 text-xs font-bold text-emerald-300">
-                <span className="w-5 h-5 rounded-full bg-emerald-500/20 flex items-center justify-center text-[11px]">2</span>
-                <span>Teslimat Kodu (Delivery OTP)</span>
+            <div className="p-3.5 rounded-xl bg-[#0F1E10] border border-emerald-500/40 space-y-2">
+              <div className="flex items-center gap-2 font-mono text-xs font-bold text-emerald-300">
+                <span className="w-5 h-5 rounded bg-emerald-500/20 flex items-center justify-center text-[10px]">2</span>
+                <span>TESLİMAT KODU (DELIVERY OTP)</span>
               </div>
-              <p className="text-xs text-slate-300 leading-relaxed">
-                Kargo alıcıya ulaştığında, alıcı paketi kontrol eder ve sürücüye <strong>4 haneli teslimat kodunu</strong> verir. Kod girildiği an sürücünün parası serbest bırakılır.
+              <p className="text-xs text-slate-300 font-grotesk leading-relaxed">
+                Kargo alıcıya ulaştığında, alıcı paketi kontrol eder ve sürücüye <strong>4 haneli teslimat kodunu</strong> söyler. Kod girildiği anda para sürücüye aktarılır.
               </p>
             </div>
           </div>
 
-          <div className="p-3 rounded-xl bg-slate-950/80 border border-white/5 flex items-center gap-3 text-xs text-slate-400">
-            <ShieldCheck className="w-4 h-4 text-emerald-400 shrink-0" />
-            <span>Alıcı teslimat kodunu vermediği sürece ödeme asla aktarılmaz. İki taraf için de %100 güvenlidir.</span>
+          <div className="p-3 rounded-lg bg-[#07080A] border border-white/10 flex items-center gap-3 text-xs text-slate-400 font-grotesk">
+            <ShieldCheck className="w-4 h-4 text-[#CCFF00] shrink-0" />
+            <span>Alıcı teslimat kodunu vermediği sürece ödeme asla aktarılmaz. İki taraf için de %100 güvenceli bir sistemdir.</span>
           </div>
         </div>
       )
@@ -206,24 +208,21 @@ export const SystemTourModal: React.FC<SystemTourModalProps> = ({ isOpen, onClos
   const currentStep = steps[activeTab];
 
   return (
-    <div className="fixed inset-0 z-[9999] flex items-center justify-center p-4 bg-slate-950/80 backdrop-blur-md animate-in fade-in duration-200">
-      <div className="relative w-full max-w-2xl rounded-3xl bg-[#0D1322] border border-white/10 shadow-2xl overflow-hidden flex flex-col max-h-[90vh]">
+    <div className="fixed inset-0 z-[9999] flex items-center justify-center p-4 bg-black/85 backdrop-blur-md animate-in fade-in duration-200">
+      <div className="relative w-full max-w-2xl chamfer-card bg-[#0D0F14] border-2 border-white/10 shadow-[0_30px_90px_rgba(0,0,0,0.95)] overflow-hidden flex flex-col max-h-[90vh]">
         {/* Üst Şerit */}
-        <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-emerald-500 via-teal-400 to-purple-500" />
-        
-        {/* Başlık */}
-        <div className="p-6 pb-4 border-b border-white/5 flex items-start justify-between gap-4">
+        <div className="p-6 pb-4 border-b border-white/10 flex items-start justify-between gap-4 bg-[#12151C]">
           <div className="space-y-1">
             <div className="flex items-center gap-2">
-              <span className="px-2.5 py-0.5 rounded-full bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 text-xs font-bold uppercase tracking-wider">
-                Nasıl Çalışır?
+              <span className="font-mono text-[10px] text-[#CCFF00] uppercase tracking-widest font-bold bg-[#CCFF00]/10 px-2 py-0.5 rounded border border-[#CCFF00]/30">
+                KULLANIM REHBERİ
               </span>
-              <span className="text-xs text-slate-400">Adım {activeTab + 1} / {steps.length}</span>
+              <span className="font-mono text-xs text-slate-400">ADIM [{activeTab + 1} / {steps.length}]</span>
             </div>
-            <h2 className="text-xl font-extrabold text-white tracking-tight">
+            <h2 className="text-xl font-syne font-extrabold text-white tracking-tight">
               {currentStep.title}
             </h2>
-            <p className="text-xs text-slate-400">
+            <p className="text-xs text-slate-400 font-grotesk">
               {currentStep.subtitle}
             </p>
           </div>
@@ -231,14 +230,14 @@ export const SystemTourModal: React.FC<SystemTourModalProps> = ({ isOpen, onClos
           <button
             type="button"
             onClick={handleClose}
-            className="p-2 rounded-xl text-slate-400 hover:text-white hover:bg-white/5 transition-all"
+            className="p-2 rounded-lg text-slate-400 hover:text-white hover:bg-white/10 font-mono"
           >
             <X className="w-5 h-5" />
           </button>
         </div>
 
-        {/* Adım Seçici Butonları */}
-        <div className="px-6 py-2.5 bg-slate-900/60 border-b border-white/5 flex items-center gap-1.5 overflow-x-auto">
+        {/* Adım Seçici Tabları */}
+        <div className="px-6 py-2.5 bg-[#07080A] border-b border-white/10 flex items-center gap-1.5 overflow-x-auto font-mono text-xs">
           {steps.map((s, idx) => {
             const isActive = idx === activeTab;
             return (
@@ -246,10 +245,10 @@ export const SystemTourModal: React.FC<SystemTourModalProps> = ({ isOpen, onClos
                 key={s.id}
                 type="button"
                 onClick={() => setActiveTab(idx)}
-                className={`px-3 py-1.5 rounded-xl text-xs font-semibold whitespace-nowrap transition-all flex items-center gap-1.5 ${
+                className={`px-3 py-1.5 rounded font-bold whitespace-nowrap transition-all flex items-center gap-1.5 ${
                   isActive
-                    ? 'bg-emerald-500/20 text-emerald-300 border border-emerald-500/40 shadow-sm'
-                    : 'text-slate-400 hover:text-slate-200 hover:bg-white/5 border border-transparent'
+                    ? 'bg-[#CCFF00] text-black shadow-sm'
+                    : 'text-slate-400 hover:text-white hover:bg-white/5'
                 }`}
               >
                 <span>{s.badge}</span>
@@ -264,15 +263,15 @@ export const SystemTourModal: React.FC<SystemTourModalProps> = ({ isOpen, onClos
         </div>
 
         {/* Alt Butonlar */}
-        <div className="p-5 border-t border-white/5 bg-slate-900/40 flex flex-col sm:flex-row items-center justify-between gap-4">
-          <label className="flex items-center gap-2 text-xs text-slate-400 select-none cursor-pointer">
+        <div className="p-5 border-t border-white/10 bg-[#07080A] flex flex-col sm:flex-row items-center justify-between gap-4">
+          <label className="flex items-center gap-2 text-xs text-slate-400 select-none cursor-pointer font-mono">
             <input
               type="checkbox"
               checked={dontShowAgain}
               onChange={e => setDontShowAgain(e.target.checked)}
-              className="rounded border-slate-700 bg-slate-800 text-emerald-500 focus:ring-emerald-500/30"
+              className="rounded border-slate-700 bg-slate-800 text-[#FF4500] focus:ring-[#FF4500]"
             />
-            <span>Bir sonraki gelişimde otomatik açma</span>
+            <span>Bir daha otomatik açma</span>
           </label>
 
           <div className="flex items-center gap-2.5 w-full sm:w-auto justify-end">
@@ -280,7 +279,7 @@ export const SystemTourModal: React.FC<SystemTourModalProps> = ({ isOpen, onClos
               <button
                 type="button"
                 onClick={() => setActiveTab(prev => prev - 1)}
-                className="px-4 py-2 rounded-xl text-xs font-medium text-slate-300 hover:text-white hover:bg-white/5 border border-white/10 transition-all flex items-center gap-1.5"
+                className="px-4 py-2 rounded-lg text-xs font-mono uppercase tracking-wider text-slate-300 hover:text-white hover:bg-white/5 border border-white/10 transition-all flex items-center gap-1.5"
               >
                 <ArrowLeft className="w-3.5 h-3.5" />
                 <span>Önceki</span>
@@ -291,7 +290,7 @@ export const SystemTourModal: React.FC<SystemTourModalProps> = ({ isOpen, onClos
               <button
                 type="button"
                 onClick={() => setActiveTab(prev => prev + 1)}
-                className="px-5 py-2 rounded-xl text-xs font-bold text-slate-950 bg-emerald-400 hover:bg-emerald-300 transition-all flex items-center gap-1.5 shadow-lg shadow-emerald-500/20"
+                className="px-5 py-2 rounded-lg text-xs font-syne font-extrabold uppercase tracking-wider text-black bg-[#FF4500] hover:bg-[#e03d00] transition-all flex items-center gap-1.5 shadow-[0_4px_15px_rgba(255,69,0,0.3)] active:translate-y-0.5"
               >
                 <span>Sonraki Adım</span>
                 <ArrowRight className="w-3.5 h-3.5" />
@@ -300,10 +299,10 @@ export const SystemTourModal: React.FC<SystemTourModalProps> = ({ isOpen, onClos
               <button
                 type="button"
                 onClick={handleClose}
-                className="px-5 py-2 rounded-xl text-xs font-bold text-slate-950 bg-emerald-400 hover:bg-emerald-300 transition-all flex items-center gap-1.5 shadow-lg shadow-emerald-500/20"
+                className="px-6 py-2.5 rounded-lg text-xs font-syne font-extrabold uppercase tracking-wider text-black bg-[#CCFF00] hover:bg-[#b8e600] transition-all flex items-center gap-1.5 shadow-[0_4px_15px_rgba(204,255,0,0.3)] active:translate-y-0.5"
               >
-                <CheckCircle2 className="w-4 h-4" />
-                <span>Anladım, Kullanmaya Başla</span>
+                <CheckCircle2 className="w-4 h-4 stroke-[3]" />
+                <span>Anladım, Platformu Kullan</span>
               </button>
             )}
           </div>

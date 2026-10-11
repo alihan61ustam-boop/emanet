@@ -5,15 +5,13 @@ import {
   Calendar, 
   Package, 
   Calculator, 
-  Car, 
   Clock, 
-  CheckCircle, 
-  Sparkles, 
   Send, 
   AlertCircle,
   ShieldCheck,
   CheckCircle2,
-  X
+  X,
+  Tag
 } from 'lucide-react';
 import { TURKISH_CITIES, getCityByName } from '../../lib/turkishCities';
 import { calculateEmanetPricing } from '../../lib/pricing';
@@ -48,16 +46,11 @@ export const PackageSearch: React.FC<PackageSearchProps> = ({
   const origin = getCityByName(originCity) || TURKISH_CITIES[0];
   const dest = getCityByName(destCity) || TURKISH_CITIES[1];
 
-  // Mesafe ve Fiyatlandırma Motorunu Dinamik Çalıştır
   const route = generateFallbackRoute(origin, dest);
   const pricing = calculateEmanetPricing(route.distanceKm, desi);
-
-  // 30 KM Koridor Kurallarına Göre Eşleşen Aktif Sürücüleri Getir
   const matchingTrips = store.findMatchingTripsForRoute(originCity, destCity, desi);
 
-  // Kargo Göndericisi Sürücüye Talep Gönderir ve Escrow Başlatılır
   const handleBookTrip = (trip: DriverTrip) => {
-    // Önce kargo kaydını oluştur
     const newPkg: SenderPackage = {
       id: `pkg-${Date.now()}`,
       senderId: CURRENT_USER.id,
@@ -87,95 +80,100 @@ export const PackageSearch: React.FC<PackageSearchProps> = ({
     const match = store.matchPackageWithTrip(newPkg.id, trip.id);
 
     if (match) {
-      setSuccessToast(`Harika! ${trip.driverName} ile eşleşme sağlandı. Escrow tutarı güvenceye alındı. Pickup OTP: ${match.pickupOtp}`);
+      setSuccessToast(`Eşleşme sağlandı! ${trip.driverName} kargonuzu teslim alacak. Teslim Alma Kodunuz: [${match.pickupOtp}]`);
       onRefresh();
-      setTimeout(() => setSuccessToast(null), 5000);
+      setTimeout(() => setSuccessToast(null), 6000);
     }
   };
 
   return (
     <div className="space-y-6">
-      {/* Arama ve Filtreleme Kartı */}
-      <div className="p-6 rounded-3xl bg-slate-900/80 border border-white/10 shadow-xl space-y-6">
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-3 border-b border-white/5">
-          <div>
-            <h2 className="text-lg font-bold text-white tracking-tight flex items-center gap-2">
-              <Search className="w-5 h-5 text-emerald-400" />
-              <span>Kargo Güzergahı & Sürücü Ara</span>
-            </h2>
-            <p className="text-xs text-slate-400">
-              30 km koridorunda seyahat eden sürücüleri anında filtreleyin
+      {/* Sevk ve Arama Terminali */}
+      <div className="p-6 sm:p-7 rounded-2xl bg-[#0F1117] border border-[#262A38] shadow-2xl relative overflow-hidden chamfer-card space-y-6">
+        <div className="absolute top-0 right-0 w-72 h-72 bg-[#FF4500]/5 rounded-full blur-3xl pointer-events-none" />
+
+        {/* Üst Başlık & Ebat Butonu */}
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-4 border-b border-dashed border-[#262A38]">
+          <div className="space-y-0.5">
+            <div className="flex items-center gap-2">
+              <span className="w-2 h-2 bg-[#FF4500] rotate-45 inline-block"></span>
+              <h2 className="text-xl font-black text-white tracking-tight font-display uppercase">
+                Kargo Sevk Arama Terminali
+              </h2>
+            </div>
+            <p className="text-xs text-[#7B8194] font-mono">
+              Güzergahınızdaki aktif sürücülerin boş bagaj hacmini sorgulayın
             </p>
           </div>
 
           <button
             type="button"
             onClick={() => setIsDesiModalOpen(true)}
-            className="px-3.5 py-2 rounded-xl bg-slate-800/80 hover:bg-slate-700 border border-white/10 text-xs font-semibold text-amber-300 transition-all flex items-center gap-2 self-start sm:self-auto"
+            className="px-3.5 py-2 rounded-lg bg-[#171922] hover:bg-[#202330] border border-[#2D3242] text-xs font-mono font-bold text-[#CCFF00] transition-all flex items-center gap-2 self-start sm:self-auto shadow-sm"
           >
-            <Calculator className="w-4 h-4 text-amber-400" />
-            <span>Desi Ebat Hesapla</span>
+            <Calculator className="w-3.5 h-3.5 text-[#CCFF00]" />
+            <span>DESİ & EBAT HESAPLAYICI</span>
           </button>
         </div>
 
-        {/* Giriş Alanları */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+        {/* Giriş Alanları (Industrial Grid) */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 font-mono">
           <div className="space-y-1.5">
-            <label className="text-xs font-semibold text-slate-300 flex items-center gap-1.5">
-              <MapPin className="w-3.5 h-3.5 text-emerald-400" />
-              <span>Çıkış Şehri</span>
+            <label className="text-[11px] font-bold text-[#8C93A7] uppercase tracking-wider flex items-center gap-1.5">
+              <MapPin className="w-3.5 h-3.5 text-[#FF4500]" />
+              <span>[01] Çıkış İli</span>
             </label>
             <select
               value={originCity}
               onChange={e => setOriginCity(e.target.value)}
-              className="w-full px-3.5 py-2.5 rounded-xl bg-slate-950/80 border border-white/10 text-white text-xs font-medium focus:border-emerald-500 focus:outline-none"
+              className="w-full px-3.5 py-2.5 rounded-lg bg-[#14161F] border border-[#2A2E3E] text-white text-xs font-bold focus:border-[#FF4500] focus:outline-none"
             >
               {TURKISH_CITIES.map(c => (
                 <option key={c.plate} value={c.name}>
-                  {c.name}
+                  [{String(c.plate).padStart(2, '0')}] {c.name}
                 </option>
               ))}
             </select>
           </div>
 
           <div className="space-y-1.5">
-            <label className="text-xs font-semibold text-slate-300 flex items-center gap-1.5">
-              <MapPin className="w-3.5 h-3.5 text-purple-400" />
-              <span>Varış Şehri</span>
+            <label className="text-[11px] font-bold text-[#8C93A7] uppercase tracking-wider flex items-center gap-1.5">
+              <MapPin className="w-3.5 h-3.5 text-[#CCFF00]" />
+              <span>[02] Varış İli</span>
             </label>
             <select
               value={destCity}
               onChange={e => setDestCity(e.target.value)}
-              className="w-full px-3.5 py-2.5 rounded-xl bg-slate-950/80 border border-white/10 text-white text-xs font-medium focus:border-purple-500 focus:outline-none"
+              className="w-full px-3.5 py-2.5 rounded-lg bg-[#14161F] border border-[#2A2E3E] text-white text-xs font-bold focus:border-[#CCFF00] focus:outline-none"
             >
               {TURKISH_CITIES.map(c => (
                 <option key={c.plate} value={c.name}>
-                  {c.name}
+                  [{String(c.plate).padStart(2, '0')}] {c.name}
                 </option>
               ))}
             </select>
           </div>
 
           <div className="space-y-1.5">
-            <label className="text-xs font-semibold text-slate-300 flex items-center gap-1.5">
+            <label className="text-[11px] font-bold text-[#8C93A7] uppercase tracking-wider flex items-center gap-1.5">
               <Calendar className="w-3.5 h-3.5 text-blue-400" />
-              <span>Tarih</span>
+              <span>[03] Sefer Tarihi</span>
             </label>
             <input
               type="date"
               value={searchDate}
               onChange={e => setSearchDate(e.target.value)}
-              className="w-full px-3.5 py-2.5 rounded-xl bg-slate-950/80 border border-white/10 text-white text-xs font-medium focus:border-blue-500 focus:outline-none"
+              className="w-full px-3.5 py-2 rounded-lg bg-[#14161F] border border-[#2A2E3E] text-white text-xs font-bold focus:border-blue-500 focus:outline-none"
             />
           </div>
 
           <div className="space-y-1.5">
-            <div className="flex items-center justify-between text-xs">
-              <label className="font-semibold text-slate-300 flex items-center gap-1.5">
-                <Package className="w-3.5 h-3.5 text-amber-400" />
-                <span>Paket Hacmi</span>
+            <div className="flex items-center justify-between text-[11px]">
+              <label className="font-bold text-[#8C93A7] uppercase tracking-wider flex items-center gap-1.5">
+                <Package className="w-3.5 h-3.5 text-[#FFB800]" />
+                <span>[04] Paket Hacmi</span>
               </label>
-              <span className="font-mono font-bold text-amber-400">{desi} Desi</span>
+              <span className="font-extrabold text-[#FFB800]">{desi} DESİ</span>
             </div>
             <input
               type="range"
@@ -183,12 +181,12 @@ export const PackageSearch: React.FC<PackageSearchProps> = ({
               max="40"
               value={desi}
               onChange={e => setDesi(Number(e.target.value))}
-              className="w-full accent-amber-500 cursor-pointer pt-2"
+              className="w-full accent-[#FF4500] cursor-pointer pt-2"
             />
           </div>
         </div>
 
-        {/* Fiyat Tasarruf Bilgilendirmesi Kartı */}
+        {/* Fiyat Tasarruf Manifestosu */}
         <SavingsBadge
           marketPrice={pricing.marketPrice}
           emanetPrice={pricing.emanetPrice}
@@ -200,156 +198,184 @@ export const PackageSearch: React.FC<PackageSearchProps> = ({
 
       {/* Başarı Bildirimi */}
       {successToast && (
-        <div className="p-4 rounded-2xl bg-emerald-950/80 border border-emerald-500/50 text-emerald-200 text-xs flex items-center justify-between gap-3 shadow-xl animate-in slide-in-from-top duration-200">
+        <div className="p-4 rounded-xl bg-[#12161A] border border-[#CCFF00]/50 text-white text-xs font-mono flex items-center justify-between gap-3 shadow-xl animate-in slide-in-from-top duration-200">
           <div className="flex items-center gap-2.5">
-            <CheckCircle2 className="w-5 h-5 text-emerald-400 shrink-0" />
+            <CheckCircle2 className="w-5 h-5 text-[#CCFF00] shrink-0" />
             <span className="font-medium">{successToast}</span>
           </div>
-          <button type="button" onClick={() => setSuccessToast(null)} className="text-emerald-400 hover:text-white">
+          <button type="button" onClick={() => setSuccessToast(null)} className="text-[#CCFF00] hover:text-white">
             <X className="w-4 h-4" />
           </button>
         </div>
       )}
 
-      {/* Arama Sonuçları */}
+      {/* Arama Sonuçları: Yolculuk Biletleri / Manifestoları */}
       <div className="space-y-4">
-        <div className="flex items-center justify-between">
-          <h3 className="text-sm font-bold text-white uppercase tracking-wider flex items-center gap-2">
-            <span>Eşleşen Sürücüler</span>
-            <span className="px-2 py-0.5 rounded-full bg-slate-800 text-slate-300 text-xs font-mono">
-              {matchingTrips.length} Sonuç
+        <div className="flex items-center justify-between font-mono">
+          <div className="flex items-center gap-2">
+            <Tag className="w-4 h-4 text-[#FF4500]" />
+            <h3 className="text-xs font-bold text-white uppercase tracking-wider">
+              EŞLEŞEN SÜRÜCÜ MANİFESTOLARI
+            </h3>
+            <span className="px-2 py-0.5 rounded bg-[#1A1D27] text-[#9EA4B8] text-[11px] font-bold">
+              {matchingTrips.length} SEFER
             </span>
-          </h3>
+          </div>
 
           {matchingTrips.length === 0 && (
             <button
               type="button"
               onClick={() => setIsPoolModalOpen(true)}
-              className="px-4 py-2 rounded-xl bg-emerald-400 hover:bg-emerald-300 text-slate-950 font-bold text-xs transition-all flex items-center gap-1.5 shadow-md shadow-emerald-500/20"
+              className="px-4 py-2 rounded-lg bg-[#FF4500] text-black font-extrabold text-xs transition-all flex items-center gap-1.5 shadow-lg shadow-[#FF4500]/25"
             >
               <Package className="w-3.5 h-3.5" />
-              <span>İlan Havuzuna Bırak</span>
+              <span>İLAN HAVUZUNA BIRAK</span>
             </button>
           )}
         </div>
 
         {matchingTrips.length > 0 ? (
-          <div className="grid grid-cols-1 gap-4">
+          <div className="grid grid-cols-1 gap-4 font-mono">
             {matchingTrips.map(trip => {
               const depDate = new Date(trip.departureTime);
 
               return (
                 <div
                   key={trip.id}
-                  className="p-5 rounded-3xl bg-slate-900/80 border border-white/5 hover:border-emerald-500/30 transition-all space-y-4 group shadow-lg"
+                  className="rounded-xl bg-[#0D0F14] border border-[#232736] hover:border-[#FF4500]/40 transition-all shadow-xl overflow-hidden"
                 >
-                  <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-                    {/* Sürücü ve Araç */}
-                    <div className="flex items-center gap-3.5">
-                      <div className="w-11 h-11 rounded-2xl bg-emerald-500/20 border border-emerald-500/30 flex items-center justify-center text-emerald-400 font-bold text-sm">
-                        {trip.driverName.charAt(0)}
-                      </div>
-                      <div>
-                        <div className="flex items-center gap-2">
-                          <span className="font-bold text-white text-sm">{trip.driverName}</span>
-                          {trip.tcNoVerified && (
-                            <span title="T.C. Doğrulandı"><CheckCircle className="w-3.5 h-3.5 text-emerald-400" /></span>
-                          )}
-                          <span className="text-xs font-semibold text-amber-400">★ {trip.driverRating}</span>
-                        </div>
-                        <div className="text-xs text-slate-400">{trip.vehicleInfo}</div>
-                      </div>
+                  {/* Bilet Üst Şeridi */}
+                  <div className="px-5 py-2.5 bg-[#12151E] border-b border-[#1E2230] flex items-center justify-between text-[11px] text-[#7C8296]">
+                    <div className="flex items-center gap-2">
+                      <span className="font-bold text-white">SEFER NO: #{trip.id.toUpperCase()}</span>
+                      <span>•</span>
+                      <span>KORİDOR KAPSAMI: {trip.serviceCities.length} İL</span>
                     </div>
 
-                    {/* Fiyat ve Buton */}
-                    <div className="flex items-center gap-4 self-end sm:self-auto">
-                      <div className="text-right">
-                        <div className="text-2xl font-extrabold text-white">
-                          {pricing.emanetPrice} <span className="text-xs text-emerald-400 font-bold">TL</span>
+                    <div className="flex items-center gap-1.5 text-[#CCFF00]">
+                      <span className="w-1.5 h-1.5 rounded-full bg-[#CCFF00] animate-pulse"></span>
+                      <span>REZERVASYONA AÇIK</span>
+                    </div>
+                  </div>
+
+                  {/* Bilet Ana Gövdesi */}
+                  <div className="p-5 sm:p-6 flex flex-col lg:flex-row lg:items-center justify-between gap-6">
+                    {/* Sol Kısım: Sürücü ve Rota */}
+                    <div className="space-y-3">
+                      <div className="flex items-center gap-3">
+                        <div className="w-10 h-10 rounded-lg bg-[#181B26] border border-[#2B3042] flex items-center justify-center font-display font-extrabold text-white text-base">
+                          {trip.driverName.charAt(0)}
                         </div>
-                        <div className="text-[11px] text-slate-500 line-through">
-                          {pricing.marketPrice} TL
+                        <div>
+                          <div className="flex items-center gap-2">
+                            <span className="font-bold text-white text-sm tracking-wide">{trip.driverName}</span>
+                            <span className="px-1.5 py-0.5 rounded bg-[#CCFF00]/15 text-[#CCFF00] text-[10px] font-bold">
+                              ★ {trip.driverRating}
+                            </span>
+                            {trip.tcNoVerified && (
+                              <span className="text-[10px] text-[#7E8498]">• TC ONAYLI</span>
+                            )}
+                          </div>
+                          <div className="text-xs text-[#7A8196]">{trip.vehicleInfo}</div>
                         </div>
+                      </div>
+
+                      {/* Şehir Başlığı */}
+                      <div className="flex items-center gap-2 text-lg sm:text-xl font-display font-black text-white">
+                        <span className="text-[#FF4500]">{trip.originCity}</span>
+                        <span className="text-[#595E70] text-sm">➔</span>
+                        <span className="text-[#CCFF00]">{trip.destinationCity}</span>
+                      </div>
+
+                      {/* Yol Üstü Durak Şehirleri */}
+                      <RouteCorridorBadge
+                        cities={trip.serviceCities}
+                        highlightOrigin={originCity}
+                        highlightDest={destCity}
+                      />
+                    </div>
+
+                    {/* Sağ Kısım: Bilet Koçanı & Fiyat */}
+                    <div className="flex flex-col sm:flex-row lg:flex-col items-start lg:items-end justify-between gap-4 pt-4 lg:pt-0 border-t lg:border-t-0 lg:border-l border-dashed border-[#222634] lg:pl-6 shrink-0">
+                      <div className="space-y-1 text-left lg:text-right text-xs">
+                        <div className="text-[#7A8094] flex items-center lg:justify-end gap-1.5">
+                          <Clock className="w-3.5 h-3.5 text-blue-400" />
+                          <span>{depDate.toLocaleDateString('tr-TR')} • {depDate.toLocaleTimeString('tr-TR', { hour: '2-digit', minute: '2-digit' })}</span>
+                        </div>
+                        <div className="text-[#989EAF]">
+                          Kalan Bagaj: <strong className="text-[#FFB800]">{trip.availableCapacityDesi} Desi</strong>
+                        </div>
+                      </div>
+
+                      {/* Fiyat ve Bağla Butonu */}
+                      <div className="flex items-center gap-4 w-full sm:w-auto justify-between lg:justify-end">
+                        <div className="text-left lg:text-right">
+                          <span className="text-[10px] text-[#7A8094] block uppercase">EMANET TARİFESİ</span>
+                          <div className="text-2xl font-black text-white font-display">
+                            {pricing.emanetPrice} <span className="text-sm text-[#FF4500] font-mono">TL</span>
+                          </div>
+                          <div className="text-[10px] text-[#5C6173] line-through font-mono">
+                            Piyasa: {pricing.marketPrice} TL
+                          </div>
+                        </div>
+
+                        <button
+                          type="button"
+                          onClick={() => handleBookTrip(trip)}
+                          className="px-5 py-3 rounded-lg bg-[#FF4500] hover:bg-[#FF5719] text-black font-extrabold text-xs transition-all flex items-center gap-2 shadow-lg shadow-[#FF4500]/25"
+                        >
+                          <Send className="w-3.5 h-3.5" />
+                          <span>SEFERİ BAĞLA</span>
+                        </button>
                       </div>
 
                       <button
                         type="button"
-                        onClick={() => handleBookTrip(trip)}
-                        className="px-5 py-2.5 rounded-xl bg-emerald-400 hover:bg-emerald-300 text-slate-950 font-bold text-xs transition-all flex items-center gap-1.5 shadow-lg shadow-emerald-500/20"
+                        onClick={() => onSelectTripForMap(trip)}
+                        className="text-[11px] text-[#8C93A6] hover:text-[#FF4500] underline self-end"
                       >
-                        <Send className="w-3.5 h-3.5" />
-                        <span>Emanet Talebi Gönder</span>
+                        Haritada Güzergâhı Aç ➔
                       </button>
                     </div>
-                  </div>
-
-                  {/* Detay Bilgileri */}
-                  <div className="flex flex-wrap items-center gap-4 text-xs text-slate-300 pt-3 border-t border-white/5">
-                    <span className="flex items-center gap-1.5">
-                      <Clock className="w-3.5 h-3.5 text-blue-400" />
-                      <span>{depDate.toLocaleDateString('tr-TR')} {depDate.toLocaleTimeString('tr-TR', { hour: '2-digit', minute: '2-digit' })}</span>
-                    </span>
-
-                    <span className="flex items-center gap-1.5">
-                      <Package className="w-3.5 h-3.5 text-amber-400" />
-                      <span>Kalan Bagaj: <strong className="text-amber-300 font-mono">{trip.availableCapacityDesi} Desi</strong></span>
-                    </span>
-
-                    <button
-                      type="button"
-                      onClick={() => onSelectTripForMap(trip)}
-                      className="text-emerald-400 hover:underline font-semibold ml-auto"
-                    >
-                      Haritada 30 km Koridorunu İncele →
-                    </button>
-                  </div>
-
-                  {/* Koridor Şehirleri */}
-                  <div className="pt-1">
-                    <RouteCorridorBadge
-                      cities={trip.serviceCities}
-                      highlightOrigin={originCity}
-                      highlightDest={destCity}
-                    />
                   </div>
                 </div>
               );
             })}
           </div>
         ) : (
-          /* EŞLEŞME YOKSA BOŞ DURUM & İLAN HAVUZUNA BIRAK CTA */
-          <div className="p-8 rounded-3xl bg-slate-900/60 border border-white/10 text-center space-y-4 max-w-xl mx-auto shadow-2xl">
-            <div className="w-14 h-14 rounded-3xl bg-amber-500/20 border border-amber-500/30 flex items-center justify-center text-amber-400 mx-auto">
-              <AlertCircle className="w-7 h-7" />
+          /* Eşleşme Yoksa: Havuz Manifestosu */
+          <div className="p-8 rounded-2xl bg-[#0D0F14] border border-[#232736] text-center space-y-4 max-w-xl mx-auto shadow-2xl font-mono">
+            <div className="w-12 h-12 rounded-xl bg-[#FF4500]/10 border border-[#FF4500]/30 flex items-center justify-center text-[#FF4500] mx-auto">
+              <AlertCircle className="w-6 h-6" />
             </div>
 
-            <div className="space-y-1.5">
-              <h4 className="text-base font-bold text-white">
-                Bu Güzergahta Henüz Aktif Sürücü Bulunamadı
+            <div className="space-y-1">
+              <h4 className="text-base font-bold text-white uppercase font-display">
+                Bu Güzergâhta Henüz Sefer Yok
               </h4>
-              <p className="text-xs text-slate-300 leading-relaxed">
-                {originCity} ile {destCity} arasında şu an planlanmış sefer yok. Ancak kargonuzu <strong>İlan Havuzuna</strong> bırakabilirsiniz! Bu koridordan geçecek yeni bir sürücü sisteme girdiğinde anında eşleşeceksiniz.
+              <p className="text-xs text-[#82889A] leading-relaxed">
+                {originCity} ile {destCity} arasında doğrudan sürücü bulunamadı. Kargonuzu İlan Havuzuna bırakarak geçen sürücülerin anlık bildirim almasını sağlayabilirsiniz.
               </p>
             </div>
 
-            <div className="p-3 rounded-2xl bg-slate-950/80 border border-white/5 text-xs text-slate-400 flex items-center justify-center gap-2">
-              <ShieldCheck className="w-4 h-4 text-emerald-400" />
-              <span>Garantili İndirimli Fiyat: <strong>{pricing.emanetPrice} TL</strong> (%25 Tasarruf Kilitlenir)</span>
+            <div className="p-3 rounded-lg bg-[#14161F] border border-[#242735] text-xs text-[#A0A6BA] flex items-center justify-center gap-2">
+              <ShieldCheck className="w-4 h-4 text-[#CCFF00]" />
+              <span>Garantili Fiyatınız: <strong className="text-white">{pricing.emanetPrice} TL</strong> (%25 İndirim Sabitlenir)</span>
             </div>
 
             <button
               type="button"
               onClick={() => setIsPoolModalOpen(true)}
-              className="px-6 py-3 rounded-xl bg-emerald-400 hover:bg-emerald-300 text-slate-950 font-bold text-xs transition-all flex items-center justify-center gap-2 shadow-lg shadow-emerald-500/25 mx-auto"
+              className="px-6 py-3 rounded-lg bg-[#FF4500] text-black font-extrabold text-xs transition-all flex items-center justify-center gap-2 shadow-lg shadow-[#FF4500]/25 mx-auto"
             >
               <Package className="w-4 h-4" />
-              <span>Tek Tuşla İlan Havuzuna Bırak</span>
+              <span>TALEBİ İLAN HAVUZUNA BIRAK</span>
             </button>
           </div>
         )}
       </div>
 
-      {/* Desi Ebat Hesaplama Modalı */}
+      {/* Modallar */}
       <DesiCalculatorModal
         isOpen={isDesiModalOpen}
         onClose={() => setIsDesiModalOpen(false)}
@@ -359,7 +385,6 @@ export const PackageSearch: React.FC<PackageSearchProps> = ({
         }}
       />
 
-      {/* İlan Havuzu Modalı */}
       <PackagePoolModal
         isOpen={isPoolModalOpen}
         onClose={() => setIsPoolModalOpen(false)}
@@ -368,9 +393,9 @@ export const PackageSearch: React.FC<PackageSearchProps> = ({
         initialDesi={desi}
         initialPackageType={packageType}
         onPackageAdded={pkg => {
-          setSuccessToast(`"${pkg.title}" kargonuz başarıyla İlan Havuzuna bırakıldı! Geçen sürücüler bilgilendirilecek.`);
+          setSuccessToast(`"${pkg.title}" ilan havuzuna kaydedildi! Güzergâhınızdan geçen sürücülere bildirim iletilecektir.`);
           onRefresh();
-          setTimeout(() => setSuccessToast(null), 5000);
+          setTimeout(() => setSuccessToast(null), 6000);
         }}
       />
     </div>

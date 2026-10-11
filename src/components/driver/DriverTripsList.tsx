@@ -7,10 +7,10 @@ import {
   CheckCircle, 
   Plus, 
   Sparkles, 
-  ArrowRight, 
   ShieldCheck,
   CheckCircle2,
-  X
+  X,
+  Gauge
 } from 'lucide-react';
 import { DriverTrip, SenderPackage } from '../../types';
 import { RouteCorridorBadge } from '../map/RouteCorridorBadge';
@@ -34,107 +34,113 @@ export const DriverTripsList: React.FC<DriverTripsListProps> = ({
   const [reviewTrip, setReviewTrip] = useState<DriverTrip | null>(null);
   const [successToast, setSuccessToast] = useState<string | null>(null);
 
-  // Havuzdaki bir kargoyu sürücü kabul eder
   const handleAcceptPackage = (pkg: SenderPackage, trip: DriverTrip) => {
     const match = store.matchPackageWithTrip(pkg.id, trip.id);
     if (match) {
-      setSuccessToast(`"${pkg.title}" başarıyla kabul edildi! ${pkg.driverPayout} TL hakediş Escrow havuzuna kilitlendi.`);
+      setSuccessToast(`"${pkg.title}" bagajınıza eklendi! ${pkg.driverPayout} TL hakediş hesabınıza kilitlendi.`);
       onRefresh();
-      // Toast'u 4 sn sonra gizle
-      setTimeout(() => setSuccessToast(null), 4000);
+      setTimeout(() => setSuccessToast(null), 5000);
     }
   };
 
   return (
-    <div className="space-y-4">
-      {/* Başlık ve Yeni İlan Aç Butonu */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-2 border-b border-white/5">
+    <div className="space-y-4 font-mono">
+      {/* Üst Bar */}
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-3 border-b border-[#202432]">
         <div>
-          <h2 className="text-lg font-bold text-white tracking-tight flex items-center gap-2">
-            <Car className="w-5 h-5 text-emerald-400" />
-            <span>Aktif Sürücü Güzergahları</span>
-            <span className="px-2 py-0.5 rounded-full bg-slate-800 text-slate-300 text-xs font-mono">
-              {trips.length} Sefer
+          <h2 className="text-lg font-bold text-white tracking-tight flex items-center gap-2 uppercase font-display">
+            <Car className="w-5 h-5 text-[#FF4500]" />
+            <span>Aktif Sefer Manifestoları</span>
+            <span className="px-2 py-0.5 rounded bg-[#1A1D28] text-[#8C93A6] text-xs font-bold font-mono">
+              {trips.length} SEFER
             </span>
           </h2>
-          <p className="text-xs text-slate-400">
-            Kalkış yapacak sürücüler ve 30 km koridorundaki boş bagaj kapasiteleri
+          <p className="text-xs text-[#7A8094]">
+            Planlanmış güzergahlar ve kalan bagaj desi kapasiteleri
           </p>
         </div>
 
         <button
           type="button"
           onClick={onOpenCreateTrip}
-          className="px-4 py-2.5 rounded-xl bg-emerald-400 hover:bg-emerald-300 text-slate-950 font-bold text-xs transition-all flex items-center justify-center gap-2 shadow-lg shadow-emerald-500/20 shrink-0"
+          className="px-4 py-2.5 rounded-lg bg-[#FF4500] hover:bg-[#FF5719] text-black font-extrabold text-xs transition-all flex items-center justify-center gap-2 shadow-lg shadow-[#FF4500]/25 shrink-0"
         >
           <Plus className="w-4 h-4" />
-          <span>Yeni Güzergah & İlan Aç</span>
+          <span>YENİ SEFER MANİFESTOSU AÇ</span>
         </button>
       </div>
 
       {/* Başarı Bildirimi */}
       {successToast && (
-        <div className="p-3.5 rounded-xl bg-emerald-950/80 border border-emerald-500/40 text-emerald-200 text-xs flex items-center justify-between gap-3 shadow-lg animate-in slide-in-from-top duration-200">
+        <div className="p-3.5 rounded-xl bg-[#12161A] border border-[#CCFF00]/50 text-white text-xs flex items-center justify-between gap-3 shadow-xl animate-in slide-in-from-top duration-200">
           <div className="flex items-center gap-2">
-            <CheckCircle2 className="w-4 h-4 text-emerald-400 shrink-0" />
+            <CheckCircle2 className="w-4 h-4 text-[#CCFF00] shrink-0" />
             <span>{successToast}</span>
           </div>
-          <button type="button" onClick={() => setSuccessToast(null)} className="text-emerald-400 hover:text-white">
+          <button type="button" onClick={() => setSuccessToast(null)} className="text-[#CCFF00] hover:text-white">
             <X className="w-3.5 h-3.5" />
           </button>
         </div>
       )}
 
-      {/* Sürücü Seferleri Listesi */}
+      {/* Sefer Kartları */}
       <div className="grid grid-cols-1 gap-4">
         {trips.map(trip => {
           const isSelected = trip.id === selectedTripId;
           const waitingPackages = store.getWaitingPackagesForTrip(trip);
           const departureDate = new Date(trip.departureTime);
+          const capacityPercent = Math.round((trip.availableCapacityDesi / trip.totalCapacityDesi) * 100);
 
           return (
             <div
               key={trip.id}
-              className={`p-5 rounded-2xl border transition-all cursor-pointer ${
+              className={`p-5 sm:p-6 rounded-xl border transition-all cursor-pointer relative overflow-hidden ${
                 isSelected
-                  ? 'bg-slate-900/95 border-emerald-500/50 shadow-xl shadow-emerald-950/30 ring-1 ring-emerald-500/30'
-                  : 'bg-slate-900/60 border-white/5 hover:border-white/20 hover:bg-slate-900/80'
+                  ? 'bg-[#12141C] border-[#FF4500] shadow-2xl ring-1 ring-[#FF4500]/30'
+                  : 'bg-[#0E1016] border-[#222533] hover:border-[#35394B] hover:bg-[#12141C]'
               }`}
               onClick={() => onSelectTrip(trip)}
             >
-              <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4">
-                {/* Sol Kısım: Sürücü & Rota Başlığı */}
-                <div className="space-y-2">
+              {/* Seçili Rozeti */}
+              {isSelected && (
+                <div className="absolute top-0 right-0 bg-[#FF4500] text-black font-black text-[9px] px-2 py-0.5 uppercase tracking-wider rounded-bl-md">
+                  HARİTADA AKTİF
+                </div>
+              )}
+
+              <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-5">
+                {/* Sol Kısım: Sürücü, Şehirler ve Koridor */}
+                <div className="space-y-3">
                   <div className="flex items-center gap-3">
-                    <span className="w-8 h-8 rounded-xl bg-emerald-500/20 text-emerald-400 flex items-center justify-center font-bold text-xs">
+                    <span className="w-8 h-8 rounded-lg bg-[#191D28] text-white flex items-center justify-center font-bold text-xs border border-[#2B3042]">
                       {trip.driverName.charAt(0)}
                     </span>
                     <div>
                       <div className="flex items-center gap-2">
                         <span className="text-sm font-bold text-white">{trip.driverName}</span>
                         {trip.tcNoVerified && (
-                          <span title="T.C. Doğrulandı"><CheckCircle className="w-3.5 h-3.5 text-emerald-400" /></span>
+                          <span title="T.C. Doğrulandı"><CheckCircle className="w-3.5 h-3.5 text-[#CCFF00]" /></span>
                         )}
-                        <span className="text-[11px] font-semibold text-amber-400">★ {trip.driverRating}</span>
+                        <span className="text-[11px] font-bold text-[#FFB800]">★ {trip.driverRating}</span>
                       </div>
-                      <div className="text-[11px] text-slate-400">{trip.vehicleInfo}</div>
+                      <div className="text-[11px] text-[#7A8094]">{trip.vehicleInfo}</div>
                     </div>
                   </div>
 
-                  {/* Şehir Başlığı */}
-                  <div className="flex items-center gap-2 text-base font-extrabold text-white">
-                    <span className="text-emerald-400">{trip.originCity}</span>
-                    <span className="text-slate-500">→</span>
-                    <span className="text-purple-400">{trip.destinationCity}</span>
-                    <span className="text-xs font-normal text-slate-400 ml-2">
+                  {/* Rota Şehirleri */}
+                  <div className="flex items-center gap-2 text-base sm:text-lg font-black text-white font-display">
+                    <span className="text-[#FF4500]">{trip.originCity}</span>
+                    <span className="text-[#595E70] text-xs">➔</span>
+                    <span className="text-[#CCFF00]">{trip.destinationCity}</span>
+                    <span className="text-xs font-normal text-[#7A8094] ml-2 font-mono">
                       (~{trip.distanceKm} km • ~{trip.estimatedHours} saat)
                     </span>
                   </div>
 
-                  {/* 30 km Koridor Rozetleri */}
+                  {/* 30 km Koridor Durakları */}
                   <div className="space-y-1">
-                    <div className="text-[11px] font-semibold text-slate-400 uppercase tracking-wider">
-                      30 KM Otoyol Koridoru (Yol Üstü Durakları):
+                    <div className="text-[10px] font-bold text-[#72788C] uppercase tracking-wider">
+                      GÜZERGAH DURAKLARI:
                     </div>
                     <RouteCorridorBadge
                       cities={trip.serviceCities}
@@ -144,24 +150,37 @@ export const DriverTripsList: React.FC<DriverTripsListProps> = ({
                   </div>
                 </div>
 
-                {/* Sağ Kısım: Kapasite, Saat ve Butonlar */}
-                <div className="flex flex-col sm:flex-row lg:flex-col items-start lg:items-end justify-between gap-3 shrink-0">
-                  <div className="space-y-1 text-right sm:text-left lg:text-right">
-                    <div className="flex items-center gap-1.5 text-xs text-slate-300">
+                {/* Sağ Kısım: Bagaj Göstergesi & Butonlar */}
+                <div className="flex flex-col sm:flex-row lg:flex-col items-start lg:items-end justify-between gap-4 shrink-0 pt-3 lg:pt-0 border-t lg:border-t-0 border-[#1E2230]">
+                  <div className="space-y-2 text-left lg:text-right">
+                    <div className="flex items-center lg:justify-end gap-1.5 text-xs text-[#8A90A4]">
                       <Clock className="w-3.5 h-3.5 text-blue-400" />
-                      <span>{departureDate.toLocaleDateString('tr-TR')} • {departureDate.toLocaleTimeString('tr-TR', { hour: '2-digit', minute: '2-digit' })}</span>
+                      <span>{departureDate.toLocaleDateString('tr-TR')} {departureDate.toLocaleTimeString('tr-TR', { hour: '2-digit', minute: '2-digit' })}</span>
                     </div>
 
-                    <div className="flex items-center gap-2">
-                      <Package className="w-3.5 h-3.5 text-amber-400" />
-                      <span className="text-xs text-slate-400">Kalan Bagaj:</span>
-                      <span className="text-xs font-bold text-amber-400 font-mono">
-                        {trip.availableCapacityDesi} / {trip.totalCapacityDesi} Desi
-                      </span>
+                    {/* Segmentli Bagaj Doluluk Sayacı */}
+                    <div className="p-2.5 rounded-lg bg-[#161822] border border-[#262A38] space-y-1.5">
+                      <div className="flex items-center justify-between gap-3 text-[11px]">
+                        <span className="text-[#7A8094] flex items-center gap-1">
+                          <Gauge className="w-3 h-3 text-[#FFB800]" />
+                          <span>Kalan Bagaj:</span>
+                        </span>
+                        <span className="font-extrabold text-[#CCFF00]">
+                          {trip.availableCapacityDesi} / {trip.totalCapacityDesi} Desi
+                        </span>
+                      </div>
+
+                      {/* İlerleme Çubuğu */}
+                      <div className="w-36 h-2 bg-[#202330] rounded-full overflow-hidden">
+                        <div 
+                          className="h-full bg-gradient-to-r from-[#FF4500] to-[#CCFF00] rounded-full transition-all"
+                          style={{ width: `${capacityPercent}%` }}
+                        />
+                      </div>
                     </div>
                   </div>
 
-                  {/* Bekleyen Kargo Uyarısı veya Aksiyon */}
+                  {/* Butonlar */}
                   <div className="flex items-center gap-2 w-full sm:w-auto">
                     {waitingPackages.length > 0 ? (
                       <button
@@ -170,14 +189,14 @@ export const DriverTripsList: React.FC<DriverTripsListProps> = ({
                           e.stopPropagation();
                           setReviewTrip(trip);
                         }}
-                        className="px-3.5 py-2 rounded-xl bg-emerald-500/20 hover:bg-emerald-500/30 border border-emerald-500/40 text-emerald-300 text-xs font-bold transition-all flex items-center gap-1.5 shadow-sm"
+                        className="px-3.5 py-2 rounded-lg bg-[#CCFF00] hover:bg-[#BBE800] text-black text-xs font-black transition-all flex items-center gap-1.5 shadow-md shadow-[#CCFF00]/15"
                       >
-                        <Sparkles className="w-3.5 h-3.5 text-emerald-400" />
-                        <span>{waitingPackages.length} Bekleyen Kargo</span>
+                        <Sparkles className="w-3.5 h-3.5" />
+                        <span>{waitingPackages.length} TALEP BEKLİYOR</span>
                       </button>
                     ) : (
-                      <span className="text-[11px] text-slate-500 px-2 py-1 rounded bg-slate-800/40">
-                        Bekleyen kargo yok
+                      <span className="text-[10px] text-[#636879] px-2 py-1 rounded bg-[#161822]">
+                        Talep Beklenmiyor
                       </span>
                     )}
 
@@ -187,17 +206,17 @@ export const DriverTripsList: React.FC<DriverTripsListProps> = ({
                         e.stopPropagation();
                         onSelectTrip(trip);
                       }}
-                      className="px-3 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-white text-xs font-medium border border-white/10 transition-all"
+                      className="px-3 py-2 rounded-lg bg-[#191C26] hover:bg-[#252938] text-white text-xs font-bold border border-[#2E3346] transition-all"
                     >
-                      Haritada Göster
+                      Haritada Aç
                     </button>
                   </div>
                 </div>
               </div>
 
               {trip.notes && (
-                <div className="mt-3 pt-3 border-t border-white/5 text-xs text-slate-400">
-                  <strong className="text-slate-300">Not:</strong> {trip.notes}
+                <div className="mt-3 pt-3 border-t border-dashed border-[#202330] text-[11px] text-[#7A8094]">
+                  <strong className="text-white">NOT:</strong> {trip.notes}
                 </div>
               )}
             </div>
@@ -205,21 +224,21 @@ export const DriverTripsList: React.FC<DriverTripsListProps> = ({
         })}
       </div>
 
-      {/* Bekleyen Kargoları İnceleme ve Kabul Etme Modalı */}
+      {/* Bekleyen Kargoları İnceleme Modalı */}
       {reviewTrip && (
-        <div className="fixed inset-0 z-[9995] flex items-center justify-center p-4 bg-slate-950/80 backdrop-blur-md animate-in fade-in duration-200">
-          <div className="relative w-full max-w-2xl rounded-3xl bg-[#0D1322] border border-white/10 shadow-2xl overflow-hidden flex flex-col max-h-[85vh]">
-            <div className="p-5 border-b border-white/5 flex items-center justify-between">
+        <div className="fixed inset-0 z-[9995] flex items-center justify-center p-4 bg-black/85 backdrop-blur-md animate-in fade-in duration-200">
+          <div className="relative w-full max-w-2xl rounded-2xl bg-[#0F1118] border border-[#2A2F40] shadow-2xl overflow-hidden flex flex-col max-h-[85vh]">
+            <div className="p-5 border-b border-[#202432] flex items-center justify-between">
               <div>
                 <div className="flex items-center gap-2">
-                  <span className="px-2 py-0.5 rounded-full bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 text-[10px] font-bold uppercase">
-                    30 KM Yol Üstü Havuzu
+                  <span className="px-2 py-0.5 rounded bg-[#FF4500] text-black text-[10px] font-black uppercase">
+                    YOL ÜSTÜ TALEPLERİ
                   </span>
-                  <span className="text-xs text-slate-400">
-                    {reviewTrip.originCity} → {reviewTrip.destinationCity}
+                  <span className="text-xs text-[#7A8094]">
+                    {reviewTrip.originCity} ➔ {reviewTrip.destinationCity}
                   </span>
                 </div>
-                <h3 className="text-base font-bold text-white mt-1">
+                <h3 className="text-base font-bold text-white mt-1 font-display">
                   Rotanızla Kesişen Bekleyen Kargolar
                 </h3>
               </div>
@@ -227,7 +246,7 @@ export const DriverTripsList: React.FC<DriverTripsListProps> = ({
               <button
                 type="button"
                 onClick={() => setReviewTrip(null)}
-                className="p-1.5 rounded-xl text-slate-400 hover:text-white hover:bg-white/5"
+                className="p-1.5 rounded-lg text-[#7A8094] hover:text-white hover:bg-white/5"
               >
                 <X className="w-5 h-5" />
               </button>
@@ -237,39 +256,39 @@ export const DriverTripsList: React.FC<DriverTripsListProps> = ({
               {store.getWaitingPackagesForTrip(reviewTrip).map(pkg => (
                 <div
                   key={pkg.id}
-                  className="p-4 rounded-2xl bg-slate-900/90 border border-white/5 space-y-3"
+                  className="p-4 rounded-xl bg-[#141620] border border-[#252938] space-y-3"
                 >
                   <div className="flex items-start justify-between gap-3">
                     <div>
                       <div className="text-sm font-bold text-white">{pkg.title}</div>
-                      <div className="text-xs text-slate-400 mt-0.5">
+                      <div className="text-xs text-[#7A8094] mt-0.5">
                         Gönderen: {pkg.senderName} • Alıcı: {pkg.receiverName}
                       </div>
                     </div>
 
                     <div className="text-right">
-                      <div className="text-base font-extrabold text-emerald-400">
-                        {pkg.driverPayout} TL
+                      <div className="text-base font-extrabold text-[#CCFF00]">
+                        +{pkg.driverPayout} TL
                       </div>
-                      <div className="text-[10px] text-slate-500">Sürücü Net Kazancı</div>
+                      <div className="text-[10px] text-[#7A8094]">Sürücü Net Kazancı</div>
                     </div>
                   </div>
 
-                  <div className="flex flex-wrap items-center gap-3 text-xs text-slate-300 pt-2 border-t border-white/5">
-                    <span className="flex items-center gap-1 font-semibold text-white">
-                      <MapPin className="w-3.5 h-3.5 text-emerald-400" />
-                      {pkg.originCity} → {pkg.destinationCity}
+                  <div className="flex flex-wrap items-center gap-3 text-xs text-[#A0A6BA] pt-2 border-t border-[#1F2332]">
+                    <span className="flex items-center gap-1 font-bold text-white">
+                      <MapPin className="w-3.5 h-3.5 text-[#FF4500]" />
+                      {pkg.originCity} ➔ {pkg.destinationCity}
                     </span>
-                    <span className="text-slate-500">•</span>
-                    <span className="font-mono text-amber-400 font-bold">{pkg.desi} Desi</span>
-                    <span className="text-slate-500">•</span>
-                    <span className="text-slate-400">~{pkg.distanceKm} km</span>
+                    <span>•</span>
+                    <span className="text-[#FFB800] font-bold">{pkg.desi} Desi</span>
+                    <span>•</span>
+                    <span>~{pkg.distanceKm} km</span>
                   </div>
 
                   <div className="flex items-center justify-between pt-1">
-                    <div className="text-[11px] text-slate-400 flex items-center gap-1">
-                      <ShieldCheck className="w-3.5 h-3.5 text-emerald-400" />
-                      <span>Emanet Escrow bakiyesi hazır bekliyor</span>
+                    <div className="text-[11px] text-[#7A8094] flex items-center gap-1">
+                      <ShieldCheck className="w-3.5 h-3.5 text-[#CCFF00]" />
+                      <span>Ödeme sistem güvencesinde hazır</span>
                     </div>
 
                     <button
@@ -280,21 +299,21 @@ export const DriverTripsList: React.FC<DriverTripsListProps> = ({
                           setReviewTrip(null);
                         }
                       }}
-                      className="px-4 py-2 rounded-xl bg-emerald-400 hover:bg-emerald-300 text-slate-950 font-bold text-xs transition-all flex items-center gap-1.5 shadow-md shadow-emerald-500/20"
+                      className="px-4 py-2 rounded-lg bg-[#FF4500] hover:bg-[#FF5719] text-black font-extrabold text-xs transition-all flex items-center gap-1.5 shadow-lg shadow-[#FF4500]/20"
                     >
                       <Plus className="w-4 h-4" />
-                      <span>Kabul Et ve Bagaja Ekle</span>
+                      <span>KABUL ET VE BAGAJA EKLE</span>
                     </button>
                   </div>
                 </div>
               ))}
             </div>
 
-            <div className="p-4 border-t border-white/5 bg-slate-900/40 text-right">
+            <div className="p-4 border-t border-[#202432] bg-[#0A0B10] text-right">
               <button
                 type="button"
                 onClick={() => setReviewTrip(null)}
-                className="px-4 py-2 rounded-xl text-xs font-medium text-slate-300 hover:text-white"
+                className="px-4 py-2 rounded-lg text-xs font-bold text-[#8A90A2] hover:text-white"
               >
                 Kapat
               </button>
